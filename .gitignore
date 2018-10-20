@@ -1,0 +1,4 @@
+hibernate.properties
+
+# ignoramos los archivos compilados (.class)!
+*.class
