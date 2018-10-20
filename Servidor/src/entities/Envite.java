@@ -8,7 +8,7 @@ import enums.TipoEnvite;
 
 @Entity
 @DiscriminatorValue("env")
-public class EnviteEntity extends MovimientoEntity {
+public class Envite extends Movimiento {
 
 	@Column (name = "tipo_envite", columnDefinition = "tinyint")
 	private TipoEnvite tipoEnvite;
@@ -16,9 +16,9 @@ public class EnviteEntity extends MovimientoEntity {
 //	@ManyToOne(cascade = CascadeType.ALL)
 	@ManyToOne
 	@JoinColumn(name = "id_jugador")
-	private JugadorEntity jugador;
+	private Jugador jugador;
 
-	public EnviteEntity() {
+	public Envite() {
 	}
 
 	public TipoEnvite getTipoEnvite() {
@@ -29,15 +29,15 @@ public class EnviteEntity extends MovimientoEntity {
 		this.tipoEnvite = tipoEnvite;
 	}
 
-	public EnviteEntity(TipoEnvite tipoEnvite) {
+	public Envite(TipoEnvite tipoEnvite) {
 		this.tipoEnvite = tipoEnvite;
 	}
 
-	public JugadorEntity getJugador() {
+	public Jugador getJugador() {
 		return jugador;
 	}
 
-	public void setJugador(JugadorEntity jugador) {
+	public void setJugador(Jugador jugador) {
 		this.jugador = jugador;
 	}
 

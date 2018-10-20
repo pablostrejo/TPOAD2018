@@ -14,7 +14,7 @@ import enums.TipoCategoria;
 
 @Entity
 @Table (name = "Parejas")
-public class ParejaEntity {
+public class Pareja {
 	@Id
 	@Column (name = "id_pareja", nullable = false)
 	@GeneratedValue
@@ -23,12 +23,12 @@ public class ParejaEntity {
 //	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@ManyToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_jugador1")
-	private JugadorEntity jugador1;
+	private Jugador jugador1;
 
 //	@ManyToOne (cascade = CascadeType.ALL) /* fetch = FetchType.EAGER)*/
 	@ManyToOne
 	@JoinColumn (name = "id_jugador2")
-	private JugadorEntity jugador2;
+	private Jugador jugador2;
 
 	@Column (name = "nro_Pareja")
 	private int numeroPareja;
@@ -44,10 +44,10 @@ public class ParejaEntity {
 		}
 	}
 	
-	public ParejaEntity() {
+	public Pareja() {
 	}
 
-	public ParejaEntity(int numeroPareja, JugadorEntity jugador1, JugadorEntity jugador2) {
+	public Pareja(int numeroPareja, Jugador jugador1, Jugador jugador2) {
 		this.numeroPareja = numeroPareja;
 		this.jugador1 = jugador1;
 		this.jugador2 = jugador2;
@@ -70,19 +70,19 @@ public class ParejaEntity {
 		this.id = id;
 	}
 
-	public JugadorEntity getJugador1() {
+	public Jugador getJugador1() {
 		return jugador1;
 	}
 
-	public void setJugador1(JugadorEntity jugador1) {
+	public void setJugador1(Jugador jugador1) {
 		this.jugador1 = jugador1;
 	}
 
-	public JugadorEntity getJugador2() {
+	public Jugador getJugador2() {
 		return jugador2;
 	}
 
-	public void setJugador2(JugadorEntity jugador2) {
+	public void setJugador2(Jugador jugador2) {
 		this.jugador2 = jugador2;
 	}
 
@@ -94,7 +94,7 @@ public class ParejaEntity {
 		this.numeroPareja = numeroPareja;
 	}
 
-	public boolean tenesJugador(JugadorEntity jugador) {
+	public boolean tenesJugador(Jugador jugador) {
 		if(jugador1.getApodo().equals(jugador.getApodo()))
 			return true;
 		else
@@ -113,7 +113,7 @@ public class ParejaEntity {
 		return false;
 	}
 	
-	public boolean esPareja (ParejaEntity pareja) {
+	public boolean esPareja (Pareja pareja) {
 		if (this.tenesJugador(pareja.getJugador1()) && this.tenesJugador(pareja.getJugador2()))
 			return true;
 		else

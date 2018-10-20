@@ -12,7 +12,7 @@ import dtos.MovimientoDTO;
 @Table(name ="Movimientos")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="tipo",discriminatorType=DiscriminatorType.STRING)
-public class MovimientoEntity {
+public class Movimiento {
 
 	@Id
 	@Column (name = "id_movimiento", nullable = false)

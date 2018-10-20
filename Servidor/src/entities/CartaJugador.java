@@ -6,7 +6,7 @@ import dtos.CartaJugadorDTO;
 
 @Entity
 @Table(name = "CartasJugador")
-public class CartaJugadorEntity {
+public class CartaJugador {
 
 	@Id
 	@Column(name = "id_cartaJugador", nullable = false)
@@ -16,22 +16,22 @@ public class CartaJugadorEntity {
 //	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_jugador")
-	private JugadorEntity jugador;
+	private Jugador jugador;
 
 	@ManyToOne /* fetch = FetchType.EAGER) */
 	@JoinColumn(name = "id_carta")
-	private CartaEntity carta;
+	private Carta carta;
 
 	@Column(columnDefinition = "bit")
 	private boolean tirada;
 
-	public CartaJugadorEntity(JugadorEntity jugador, CartaEntity carta, boolean tirada) {
+	public CartaJugador(Jugador jugador, Carta carta, boolean tirada) {
 		this.jugador = jugador;
 		this.carta = carta;
 		this.tirada = tirada;
 	}
 
-	public CartaJugadorEntity() {
+	public CartaJugador() {
 
 	}
 
@@ -54,19 +54,19 @@ public class CartaJugadorEntity {
 		this.id = id;
 	}
 
-	public JugadorEntity getJugador() {
+	public Jugador getJugador() {
 		return jugador;
 	}
 
-	public void setJugador(JugadorEntity jugador) {
+	public void setJugador(Jugador jugador) {
 		this.jugador = jugador;
 	}
 
-	public CartaEntity getCarta() {
+	public Carta getCarta() {
 		return carta;
 	}
 
-	public void setCarta(CartaEntity carta) {
+	public void setCarta(Carta carta) {
 		this.carta = carta;
 	}
 
@@ -98,7 +98,7 @@ public class CartaJugadorEntity {
 		if (getClass() != obj.getClass())
 			return false;
 
-		CartaJugadorEntity other = (CartaJugadorEntity) obj;
+		CartaJugador other = (CartaJugador) obj;
 		if (carta == null) {
 			if (other.carta != null)
 				return false;

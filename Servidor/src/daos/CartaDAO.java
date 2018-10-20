@@ -11,7 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import dtos.CartaDTO;
-import entities.CartaEntity;
+import entities.Carta;
 
 
 public class CartaDAO {
@@ -40,11 +40,11 @@ public class CartaDAO {
 			session.close();
 	}
 	
-	public CartaEntity obtenerCarta(CartaDTO carta) {
+	public Carta obtenerCarta(CartaDTO carta) {
 		Session s = this.getSession();
-		CartaEntity devolver = new CartaEntity();
+		Carta devolver = new Carta();
 		try {
-			devolver = (CartaEntity) s.createQuery("select c from Carta c where c.id =:idcarta")
+			devolver = (Carta) s.createQuery("select c from Carta c where c.id =:idcarta")
 					.setParameter("idcarta", carta.getId()).uniqueResult();
 			closeSession();
 
@@ -56,9 +56,9 @@ public class CartaDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CartaEntity> obtenerCartas() {
+	public List<Carta> obtenerCartas() {
 		Session s = this.getSession();
-		List<CartaEntity> cartas;
+		List<Carta> cartas;
 		try {
 			Query query = s.createQuery("from Carta");
 			cartas = query.list();
@@ -71,7 +71,7 @@ public class CartaDAO {
 		}
 	}
 
-	public void guardarCarta(CartaEntity c) {
+	public void guardarCarta(Carta c) {
 		Transaction t = null;
 		Session s = this.getSession();
 		try {

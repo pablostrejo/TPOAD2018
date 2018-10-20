@@ -10,36 +10,36 @@ import dtos.MazoDTO;
 
 
 /* No se persiste el mazo */
-public class MazoEntity {
+public class Mazo {
 
-	private List<CartaEntity> cartas;
+	private List<Carta> cartas;
 
-	public MazoEntity() {
+	public Mazo() {
 		this.cartas = this.iniciarMazo();
 	}
 
-	public List<CartaEntity> getCartas() {
+	public List<Carta> getCartas() {
 		return cartas;
 	}
 
-	public void setCartas(List<CartaEntity> cartas) {
+	public void setCartas(List<Carta> cartas) {
 		this.cartas = cartas;
 	}
 
-	public CartaEntity obtenerCarta() {
+	public Carta obtenerCarta() {
 		Random rand = new Random();
 
 		int posicion = rand.nextInt(cartas.size());
 
-		CartaEntity carta = cartas.get(posicion);
+		Carta carta = cartas.get(posicion);
 
 		cartas.remove(posicion);
 
 		return carta;
 	}
 	
-	public List<CartaEntity> iniciarMazo() {
-		List<CartaEntity> mazo = new ArrayList<CartaEntity>();
+	public List<Carta> iniciarMazo() {
+		List<Carta> mazo = new ArrayList<Carta>();
 
 		mazo = CartaDAO.getInstancia().obtenerCartas();
 

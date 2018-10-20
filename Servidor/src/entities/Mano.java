@@ -34,7 +34,7 @@ import exceptions.PartidoException;
 
 @Entity
 @Table (name = "Manos")
-public class ManoEntity {
+public class Mano {
 	@Id
 	@Column (name = "id_mano", nullable = false)
 	@GeneratedValue
@@ -44,28 +44,28 @@ public class ManoEntity {
 	private int numeroMano;
 
 	@Transient
-	private ChicoEntity chico; //se utiliza para reemplazar los observers
+	private Chico chico; //se utiliza para reemplazar los observers
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_mano")
-	private List<BazaEntity> bazas;
+	private List<Baza> bazas;
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinColumn (name = "id_mano")
-	private List<CartaJugadorEntity> cartasJugador;
+	private List<CartaJugador> cartasJugador;
 
 	@Transient
-	private EnviteEntity ultimoEnvite;
+	private Envite ultimoEnvite;
 	@Transient
-	private JugadorEntity jugadorActual;
+	private Jugador jugadorActual;
 	@Transient
-	private MazoEntity mazo;
+	private Mazo mazo;
 	@Transient
-	private List<JugadorEntity> ordenJuego;
+	private List<Jugador> ordenJuego;
 
 	@Transient
-	private List<PuntajeParejaEntity> puntajes;
+	private List<PuntajePareja> puntajes;
 	@Transient
 	private byte envidoJugador1;
 	@Transient
@@ -79,20 +79,20 @@ public class ManoEntity {
 	private byte puntajeTruco;
 
 
-	public ManoEntity() {
+	public Mano() {
 		
 	}
 
-	public ManoEntity(ChicoEntity chico, int numeroMano, List<JugadorEntity> ordenJuego, List<PuntajeParejaEntity> puntajes) {
+	public Mano(Chico chico, int numeroMano, List<Jugador> ordenJuego, List<PuntajePareja> puntajes) {
 		this.chico = chico;
 		this.numeroMano = numeroMano;
 		this.puntajes = puntajes;
-		this.bazas = new ArrayList<BazaEntity>();
-		this.cartasJugador = new ArrayList<CartaJugadorEntity>();
+		this.bazas = new ArrayList<Baza>();
+		this.cartasJugador = new ArrayList<CartaJugador>();
 		this.ultimoEnvite = null;
 		this.puntajeTruco = 1; // es el puntaje minimo que se va a ganar con el Truco
 		this.jugadorActual = ordenJuego.get(0);
-		this.mazo = new MazoEntity();
+		this.mazo = new Mazo();
 
 		this.ordenJuego = ordenJuego;
 //		this.ordenJuego = new ArrayList<Jugador>();
@@ -100,31 +100,31 @@ public class ManoEntity {
 
 		repartirCartas(ordenJuego);
 
-		this.bazas.add(new BazaEntity(this, 1, ordenJuego));
+		this.bazas.add(new Baza(this, 1, ordenJuego));
 	}
 
-	private void repartirCartas(List<JugadorEntity> ordenJuego) {
+	private void repartirCartas(List<Jugador> ordenJuego) {
 		int numeroJugador = 0;
 
 		while(cartasJugador.size() < 12) {
 			if(numeroJugador > 3)
 				numeroJugador = 0;
 
-			CartaJugadorEntity carta = new CartaJugadorEntity(ordenJuego.get(numeroJugador), mazo.obtenerCarta(), false);
+			CartaJugador carta = new CartaJugador(ordenJuego.get(numeroJugador), mazo.obtenerCarta(), false);
 			numeroJugador++;
 			cartasJugador.add(carta);
 		}
 	}
 	
-	public List<JugadorEntity> getOrdenJuego() {
+	public List<Jugador> getOrdenJuego() {
 		return ordenJuego;
 	}
 
-	public void setOrdenJuego(List<JugadorEntity> ordenJuego) {
+	public void setOrdenJuego(List<Jugador> ordenJuego) {
 		this.ordenJuego = ordenJuego;
 	}
 
-	public void setBazas(List<BazaEntity> bazas) {
+	public void setBazas(List<Baza> bazas) {
 		this.bazas = bazas;
 	}
 
@@ -144,23 +144,23 @@ public class ManoEntity {
 		this.numeroMano = numeroMano;
 	}
 
-	public List<BazaEntity> getBazas() {
+	public List<Baza> getBazas() {
 		return bazas;
 	}
 
-	public void setBazas(ArrayList<BazaEntity> bazas) {
+	public void setBazas(ArrayList<Baza> bazas) {
 		this.bazas = bazas;
 	}
 
-	public List<CartaJugadorEntity> getCartasJugador() {
+	public List<CartaJugador> getCartasJugador() {
 		return cartasJugador;
 	}
 
-	public void setCartasJugador(List<CartaJugadorEntity> cartasJugador) {
+	public void setCartasJugador(List<CartaJugador> cartasJugador) {
 		this.cartasJugador = cartasJugador;
 	}
 
-	public EnviteEntity getUltimoEnvite() {
+	public Envite getUltimoEnvite() {
 		return ultimoEnvite;
 	}
 
@@ -168,27 +168,27 @@ public class ManoEntity {
 		return puntajeTruco;
 	}
 
-	public void setUltimoEnvite(EnviteEntity ultimoEnvite) {
+	public void setUltimoEnvite(Envite ultimoEnvite) {
 		this.ultimoEnvite = ultimoEnvite;
 	}
 
-	public MazoEntity getMazo() {
+	public Mazo getMazo() {
 		return mazo;
 	}
 
-	public void setMazo(MazoEntity mazo) {
+	public void setMazo(Mazo mazo) {
 		this.mazo = mazo;
 	}
 
 	private byte obtenerPuntajeEnvido(boolean querido) {
 		// recorremos todos los movimientos de la primer Baza (solo aqui se puede cantar Envido)
 		// y analizamos cual es el puntaje acumulado del Envido!
-		List<MovimientoEntity> movimientos = bazas.get(0).getTurnosBaza();
+		List<Movimiento> movimientos = bazas.get(0).getTurnosBaza();
 		String cadenaDeEnvidos = "";
 
-		for (MovimientoEntity mov: movimientos) {
-			if (mov instanceof EnviteEntity) {
-				EnviteEntity envite = (EnviteEntity) mov;
+		for (Movimiento mov: movimientos) {
+			if (mov instanceof Envite) {
+				Envite envite = (Envite) mov;
 
 				if (envite.sosAlgunEnvido())
 					cadenaDeEnvidos = cadenaDeEnvidos + (envite.getTipoEnvite().name());
@@ -203,11 +203,11 @@ public class ManoEntity {
 			else
 				cadenaDeEnvidos = cadenaDeEnvidos + (TipoEnvite.NoQuiero.name());
 
-			return EnviteEntity.obtenerPuntajeEnvido(cadenaDeEnvidos);
+			return Envite.obtenerPuntajeEnvido(cadenaDeEnvidos);
 		}
 	}
 
-	public ParejaEntity obtenerGanadorEnvido() {
+	public Pareja obtenerGanadorEnvido() {
 		// debemos obtener el Envido de TODOS los Jugadores ya que, segun las reglas,
 		// el jugador que es 'mano' debe comenzar a decir su Envido, luego el Jugador
 		// a su derecha, y asi, hasta el ultimo pie.
@@ -231,8 +231,8 @@ public class ManoEntity {
 		return null;
 	}
 
-	private byte obtenerEnvidoJugador(JugadorEntity jugador) {
-		List<CartaEntity> cartasJugador;
+	private byte obtenerEnvidoJugador(Jugador jugador) {
+		List<Carta> cartasJugador;
 		byte envidoAcumulado = 0;
 		cartasJugador = obtenerCartasDelJugador(jugador);
 
@@ -311,22 +311,22 @@ public class ManoEntity {
 		return envidoAcumulado;
 	}
 
-	public ParejaEntity obtenerParejaJugador(JugadorEntity jugador) {
+	public Pareja obtenerParejaJugador(Jugador jugador) {
 		if (puntajes.get(0).getPareja().tenesJugador(jugador)) {
 			return puntajes.get(0).getPareja();
 		}
 		return puntajes.get(1).getPareja();
 	}
 
-	private ParejaEntity obtenerParejaEnemiga(JugadorEntity jugador) {
+	private Pareja obtenerParejaEnemiga(Jugador jugador) {
 		if (puntajes.get(0).getPareja().tenesJugador(jugador)) {
 			return puntajes.get(1).getPareja();
 		}
 		return puntajes.get(0).getPareja();
 	}
 
-	public void nuevaBaza(int numeroBaza, JugadorEntity ganadorUltimaBaza) {
-		List<JugadorEntity> ordenNuevo = null;
+	public void nuevaBaza(int numeroBaza, Jugador ganadorUltimaBaza) {
+		List<Jugador> ordenNuevo = null;
 
 		// recalculamos el nuevo orden de juego
 		if (ganadorUltimaBaza == null) {
@@ -334,7 +334,7 @@ public class ManoEntity {
 			ordenNuevo = ordenJuego;
 		} else {
 			// hubo un ganador, la nueva Baza comienza con el ganador de la ultima
-			ordenNuevo = new ArrayList<JugadorEntity>();
+			ordenNuevo = new ArrayList<Jugador>();
 
 			ordenNuevo.add(ganadorUltimaBaza);
 			for (int i=ordenJuego.indexOf(ganadorUltimaBaza)+1; ordenNuevo.size()<4; i++)
@@ -344,7 +344,7 @@ public class ManoEntity {
 				ordenNuevo.add(ordenJuego.get(i));
 			}
 		}
-		bazas.add(new BazaEntity(this, numeroBaza, ordenNuevo));
+		bazas.add(new Baza(this, numeroBaza, ordenNuevo));
 	}
 
 	public ManoDTO toDTO() {
@@ -373,12 +373,12 @@ public class ManoEntity {
 	}
 
 	public boolean tocaCartaMano() {
-		BazaEntity baza = obtenerUltimaBaza(); //obtengo la ultima baza
+		Baza baza = obtenerUltimaBaza(); //obtengo la ultima baza
 
 		if(baza.getGanador() == null){ //la baza no tiene un ganador, o sea sigue activa
 			if (baza.getCantidadCartasTiradas() < 4) { //Todavia no tiraron todos sus cartas
-				MovimientoEntity mov = baza.obtenerUltimoMovimiento();
-				if((mov instanceof CartaTiradaEntity) || ultimoEnvite.getTipoEnvite().equals(TipoEnvite.Quiero) || ultimoEnvite.getTipoEnvite().equals(TipoEnvite.NoQuiero))
+				Movimiento mov = baza.obtenerUltimoMovimiento();
+				if((mov instanceof CartaTirada) || ultimoEnvite.getTipoEnvite().equals(TipoEnvite.Quiero) || ultimoEnvite.getTipoEnvite().equals(TipoEnvite.NoQuiero))
 					// Lo ultimo que se tiro fue una carta, no hay que responder envite 
 					return true;
 				
@@ -391,12 +391,12 @@ public class ManoEntity {
 		return false;
 	}
 
-	public JugadorEntity obtenerTurnoJugadorMano() {
+	public Jugador obtenerTurnoJugadorMano() {
 		return obtenerUltimaBaza().obtenerTurnoBaza();
 	}
 
-	private EnviteEntity enviteAnteriorAlQuiero() {
-		List<MovimientoEntity> movimientosBazas = new ArrayList<MovimientoEntity>();
+	private Envite enviteAnteriorAlQuiero() {
+		List<Movimiento> movimientosBazas = new ArrayList<Movimiento>();
 
 		for (int i=0; i < bazas.size(); i++) {
 			for (int j=0; j < bazas.get(i).getTurnosBaza().size(); j++) {
@@ -406,9 +406,9 @@ public class ManoEntity {
 		}
 
 		for (int i = movimientosBazas.size() - 1; i >= 0; i--) {
-			if (movimientosBazas.get(i) instanceof EnviteEntity) {
-				if (((EnviteEntity) movimientosBazas.get(i)).getTipoEnvite().equals(TipoEnvite.Quiero)) {
-					return ((EnviteEntity) movimientosBazas.get(i-1));
+			if (movimientosBazas.get(i) instanceof Envite) {
+				if (((Envite) movimientosBazas.get(i)).getTipoEnvite().equals(TipoEnvite.Quiero)) {
+					return ((Envite) movimientosBazas.get(i-1));
 				}
 			}
 		}
@@ -431,7 +431,7 @@ public class ManoEntity {
 	public boolean puedoEnvido() {
 		if (bazas.size() == 1) {
 			// es la primer baza, primera condicion para cantar envido
-			BazaEntity baza = bazas.get(0);
+			Baza baza = bazas.get(0);
 
 			if ((tocaCartaMano()) || (ultimoEnvite.getTipoEnvite().equals(TipoEnvite.Truco))) { //no hay que responder un envite anterior
 				if (baza.getCantidadCartasTiradas() >= 2) { // los que pueden cantar son el tercero o 4
@@ -564,7 +564,7 @@ public class ManoEntity {
 					break;
 				}
 				case Quiero :
-					EnviteEntity enviteAnterior = enviteAnteriorAlQuiero();
+					Envite enviteAnterior = enviteAnteriorAlQuiero();
 
 					if (enviteAnterior.sosAlgunEnvido()) {
 						respuestas.add(TipoEnvite.Truco);
@@ -605,11 +605,11 @@ public class ManoEntity {
 	}
 
 	public boolean seCantoEnvido() {
-		BazaEntity baza = bazas.get(0);
+		Baza baza = bazas.get(0);
 
-		for(MovimientoEntity mov: baza.getTurnosBaza()) {
-			if(mov instanceof EnviteEntity) {
-				EnviteEntity aux = (EnviteEntity) mov;
+		for(Movimiento mov: baza.getTurnosBaza()) {
+			if(mov instanceof Envite) {
+				Envite aux = (Envite) mov;
 
 				if (aux.sosAlgunEnvido())
 					return true;
@@ -619,12 +619,12 @@ public class ManoEntity {
 	}
 
 	public boolean seCantoTruco(){
-		for(BazaEntity baza : bazas) {
-			for(MovimientoEntity mov: baza.getTurnosBaza())
+		for(Baza baza : bazas) {
+			for(Movimiento mov: baza.getTurnosBaza())
 			{
-				if(mov instanceof EnviteEntity)
+				if(mov instanceof Envite)
 				{
-					EnviteEntity aux = (EnviteEntity) mov;
+					Envite aux = (Envite) mov;
 				
 					if(aux.getTipoEnvite() == TipoEnvite.Truco)
 						return true;
@@ -634,15 +634,15 @@ public class ManoEntity {
 		return false;
 	}
 
-	public JugadorEntity obtenerTurnoContestar() {		
+	public Jugador obtenerTurnoContestar() {		
 		return obtenerUltimaBaza().obtenerTurnoContestar();
 	}
 
-	public JugadorEntity getJugadorActual() {
+	public Jugador getJugadorActual() {
 		return jugadorActual;
 	}
 
-	public void setJugadorActual(JugadorEntity jugadorActual) {
+	public void setJugadorActual(Jugador jugadorActual) {
 		this.jugadorActual = jugadorActual;
 	}
 
@@ -662,20 +662,20 @@ public class ManoEntity {
 		return envidoJugador4;
 	}
 
-	public BazaEntity obtenerUltimaBaza() {
+	public Baza obtenerUltimaBaza() {
 		return bazas.get(bazas.size() - 1);
 	}
 
-	public void agregarMovimiento(JugadorEntity jugador, MovimientoEntity movimiento) throws PartidoException, BazaException, JugadorException {
-		BazaEntity ultimaBaza = obtenerUltimaBaza();
-		JugadorEntity ganadorBaza = null;
+	public void agregarMovimiento(Jugador jugador, Movimiento movimiento) throws PartidoException, BazaException, JugadorException {
+		Baza ultimaBaza = obtenerUltimaBaza();
+		Jugador ganadorBaza = null;
 
 		movimiento.setNumeroTurno(ultimaBaza.getTurnosBaza().size() + 1);
-		if (movimiento instanceof CartaTiradaEntity) {
-			CartaTiradaEntity cartaTirada = (CartaTiradaEntity) movimiento;
+		if (movimiento instanceof CartaTirada) {
+			CartaTirada cartaTirada = (CartaTirada) movimiento;
 
 			// obtengo la CartaJugador en estado persistente!
-			CartaJugadorEntity cartaJugador = obtenerCartaJugador(cartaTirada);
+			CartaJugador cartaJugador = obtenerCartaJugador(cartaTirada);
 			cartaTirada.setCartaJugador(cartaJugador);
 
 			if (tiroCarta(jugador, cartaTirada))
@@ -774,8 +774,8 @@ public class ManoEntity {
 			}
 
 		}
-		else if (movimiento instanceof EnviteEntity) {
-			EnviteEntity envite = (EnviteEntity) movimiento;
+		else if (movimiento instanceof Envite) {
+			Envite envite = (Envite) movimiento;
 
 			ultimaBaza.agregarMovimiento(jugador, envite);
 
@@ -788,7 +788,7 @@ public class ManoEntity {
 					// debemos calcular el puntaje que corresponde a la cadena de Envidos...
 					byte puntajeEnvido = obtenerPuntajeEnvido(true);
 					// debemos analizar quien gana el Envido!
-					ParejaEntity ganadorEnvido = obtenerGanadorEnvido();
+					Pareja ganadorEnvido = obtenerGanadorEnvido();
 					// Salvamos el caso de la falta envido
 					if (puntajeEnvido == 100){
 						puntajeEnvido = calcularPuntajeFaltaEnvido(ganadorEnvido);
@@ -820,7 +820,7 @@ public class ManoEntity {
 					// debemos calcular el puntaje que corresponde a la cadena de Envidos...
 					byte puntajeEnvido = obtenerPuntajeEnvido(false);
 					// los puntos del Envido se los lleva la Pareja contraria del Jugador que dijo NoQuiero 
-					ParejaEntity ganadorEnvido = obtenerParejaEnemiga(envite.getJugador());
+					Pareja ganadorEnvido = obtenerParejaEnemiga(envite.getJugador());
 					// OJO, quizas el que gano el Envido ya alcanzo los 30 puntos y gana el Chico!
 
 					// CERRAR BAZA? CERRAR MANO?
@@ -833,7 +833,7 @@ public class ManoEntity {
 					// NO quisieron algun Truco, por lo tanto cerramos la Mano
 					
 					// los puntos del Truco se los lleva la Pareja contraria del Jugador que dijo NoQuiero 
-					ParejaEntity ganadorTruco = obtenerParejaEnemiga(envite.getJugador());
+					Pareja ganadorTruco = obtenerParejaEnemiga(envite.getJugador());
 					// OJO, quizas el que gano el Truco ya alcanzo los 30 puntos y gana el Chico!
 
 					// CERRAR BAZA Y LUEGO LA MANO!
@@ -864,7 +864,7 @@ public class ManoEntity {
 				// canto algo! pasamos el turno al siguiente
 				// sea cual sea la Baza, hacemos que responda el pie de la otra Pareja. Aunque si es la segunda o tercer baza...canto Truco!.
 				// el metodo 'obtenerEnvitesPosibles()' es el que filtra QUIEN puede cantar en cada Baza.
-				List<JugadorEntity> ordenJuegoBaza = ultimaBaza.getOrdenJuego();
+				List<Jugador> ordenJuegoBaza = ultimaBaza.getOrdenJuego();
 
 				jugadorActual = (ordenJuegoBaza.indexOf(envite.getJugador()) == 0 || ordenJuegoBaza.indexOf(envite.getJugador()) == 2) ?
 									ordenJuegoBaza.get(3) : ordenJuegoBaza.get(2);
@@ -873,9 +873,9 @@ public class ManoEntity {
 		}
 	}
 
-	private boolean tiroCarta(JugadorEntity jugador, MovimientoEntity movimiento) {
-		for(CartaJugadorEntity cartaJugador: cartasJugador) {
-			if(cartaJugador.getJugador().equals(jugador) && (((CartaTiradaEntity) movimiento).getCartaJugador().equals(cartaJugador)))
+	private boolean tiroCarta(Jugador jugador, Movimiento movimiento) {
+		for(CartaJugador cartaJugador: cartasJugador) {
+			if(cartaJugador.getJugador().equals(jugador) && (((CartaTirada) movimiento).getCartaJugador().equals(cartaJugador)))
 				if(cartaJugador.isTirada())
 					return true;
 				else
@@ -884,14 +884,14 @@ public class ManoEntity {
 		return false;
 	}
 
-	private byte calcularPuntajeFaltaEnvido(ParejaEntity ganadorEnvido) {
+	private byte calcularPuntajeFaltaEnvido(Pareja ganadorEnvido) {
 		//Falta envido: equivale al numero de tantos necesarios para que el bando que va por
 		//delante gane el chico o el juego. Algunos jugadores apuestan a que el bando ganador
 		//lo sera tambien de la partida, aunque vaya por detras en el tanteo.
-		PuntajeParejaEntity puntajeMax = null;
+		PuntajePareja puntajeMax = null;
 		
 		// Obtengo el puntaje del que va por delante 
-		for(PuntajeParejaEntity puntaje: puntajes){
+		for(PuntajePareja puntaje: puntajes){
 			if((puntajeMax == null) || (puntaje.getPuntaje() > puntajeMax.getPuntaje()))
 			{
 				puntajeMax = puntaje;
@@ -905,7 +905,7 @@ public class ManoEntity {
 	public List<CartaJugadorDTO> obtenerCartasJugador(JugadorDTO jugador) {
 		List<CartaJugadorDTO> devolver = new ArrayList<CartaJugadorDTO>();
 
-		for(CartaJugadorEntity cartaJugador: cartasJugador) {
+		for(CartaJugador cartaJugador: cartasJugador) {
 			if(cartaJugador.getJugador().sosJugador(jugador)) {
 				devolver.add(cartaJugador.toDTO());
 			}
@@ -913,10 +913,10 @@ public class ManoEntity {
 		return devolver;
 	}
 
-	public List<CartaEntity> obtenerCartasDelJugador(JugadorEntity jugador) {
-		List<CartaEntity> cartas = new ArrayList<CartaEntity>();
+	public List<Carta> obtenerCartasDelJugador(Jugador jugador) {
+		List<Carta> cartas = new ArrayList<Carta>();
 
-		for (CartaJugadorEntity cartaJugador: cartasJugador) {
+		for (CartaJugador cartaJugador: cartasJugador) {
 			if (cartaJugador.getJugador().equals(jugador)) {
 				cartas.add(cartaJugador.getCarta());
 			}
@@ -924,25 +924,25 @@ public class ManoEntity {
 		return cartas;
 	}
 
-	public CartaJugadorEntity obtenerCartaJugador(CartaTiradaEntity carta) {
-		for(CartaJugadorEntity aux : cartasJugador) {
+	public CartaJugador obtenerCartaJugador(CartaTirada carta) {
+		for(CartaJugador aux : cartasJugador) {
 			if (aux.getCarta().getId() == (carta.getCartaJugador().getCarta().getId()))
 				return aux;
 		}
 		return null;
 	}
 
-	public void levantar(ChicoEntity chico) {
+	public void levantar(Chico chico) {
 		
 		this.chico = chico;		
-		ManoEntity aux = chico.obtenerUltimaMano();
+		Mano aux = chico.obtenerUltimaMano();
 		
 		/* Es La Mano Actual debo Actualizar sus Datos */
 		
 		if(aux.getNumeroMano() == numeroMano){
 			
 			
-			ManoEntity anteUltima = chico.obtenerAnteUltimaMano();
+			Mano anteUltima = chico.obtenerAnteUltimaMano();
 			
 		
 			
@@ -950,7 +950,7 @@ public class ManoEntity {
 				
 				/* ES LA ULTIMA MANO, NO HAY ANTEULTIMA */
 				/* LE DOY EL ORDEN INICIAL DE JUEGO */
-				ordenJuego = new ArrayList<JugadorEntity>();
+				ordenJuego = new ArrayList<Jugador>();
 				ordenJuego.addAll(chico.getOrdenInicial());
 				
 			}
@@ -960,7 +960,7 @@ public class ManoEntity {
 				 * Asumimos que Hibernate levanta en orden las CartaJugador 
 				 * Las primeras 4 cartas te dan el orden de Juego*/
 				 
-				ordenJuego = new ArrayList<JugadorEntity>();
+				ordenJuego = new ArrayList<Jugador>();
 				
 				ordenJuego.add(cartasJugador.get(0).getJugador());
 				ordenJuego.add(cartasJugador.get(1).getJugador());
@@ -971,11 +971,11 @@ public class ManoEntity {
 			}
 			/* Obtengo el Envite Actual */
 			
-			for(MovimientoEntity movimiento: obtenerUltimaBaza().getTurnosBaza())
+			for(Movimiento movimiento: obtenerUltimaBaza().getTurnosBaza())
 			{
-				if(movimiento instanceof EnviteEntity)
+				if(movimiento instanceof Envite)
 				{
-					ultimoEnvite = (EnviteEntity) movimiento;
+					ultimoEnvite = (Envite) movimiento;
 				}
 			}
 			
@@ -993,7 +993,7 @@ public class ManoEntity {
 		List<JugadorDTO> ganadores = new ArrayList<JugadorDTO>();
 		
 		JugadorDTO aux;
-		for(BazaEntity baza: bazas){
+		for(Baza baza: bazas){
 			
 			if(baza.getGanador() != null)
 			{
@@ -1016,7 +1016,7 @@ public class ManoEntity {
 
 	public boolean tenesMovimiento(MovimientoDTO ultimoMovimiento) {
 		
-		for(BazaEntity baza: bazas)
+		for(Baza baza: bazas)
 		{
 			if(baza.tenesMovimiento(ultimoMovimiento))
 				return true;
@@ -1024,11 +1024,11 @@ public class ManoEntity {
 		return false;
 	}
 
-	public List<MovimientoEntity> getProximoMovimiento(MovimientoDTO ultimoMovimiento) {
+	public List<Movimiento> getProximoMovimiento(MovimientoDTO ultimoMovimiento) {
 		
-		List<MovimientoEntity> devolver = new ArrayList<MovimientoEntity>();
+		List<Movimiento> devolver = new ArrayList<Movimiento>();
 		//no va a entrar aqui sin saber que tiene el movimiento
-		for(BazaEntity baza: bazas)
+		for(Baza baza: bazas)
 		{
 			if(baza.tenesMovimiento(ultimoMovimiento)==true){
 				devolver.addAll(baza.getProximoMovimiento(ultimoMovimiento));

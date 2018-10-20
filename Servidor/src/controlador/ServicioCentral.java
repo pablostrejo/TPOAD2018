@@ -18,20 +18,20 @@ public class ServicioCentral {
 
 	private static ServicioCentral controlador;
 
-	private ArrayList<JugadorEntity> jugadores;
-	private ArrayList<PartidoEntity> partidos;
-	private ArrayList<GrupoEntity> grupos;
-	private ArrayList<JugadorEntity> sesiones;
-	private ArrayList<JugadorEntity> esperandoLibreIndividual;
-	private ArrayList<ParejaEntity> esperandoLibreParejas;
+	private ArrayList<Jugador> jugadores;
+	private ArrayList<Partido> partidos;
+	private ArrayList<Grupo> grupos;
+	private ArrayList<Jugador> sesiones;
+	private ArrayList<Jugador> esperandoLibreIndividual;
+	private ArrayList<Pareja> esperandoLibreParejas;
 
 	private ServicioCentral() {
-		this.jugadores = new ArrayList<JugadorEntity>();
-		this.partidos = new ArrayList<PartidoEntity>();
-		this.grupos = new ArrayList<GrupoEntity>();
-		this.sesiones = new ArrayList<JugadorEntity>();
-		this.esperandoLibreIndividual = new ArrayList<JugadorEntity>();
-		this.esperandoLibreParejas = new ArrayList<ParejaEntity>();
+		this.jugadores = new ArrayList<Jugador>();
+		this.partidos = new ArrayList<Partido>();
+		this.grupos = new ArrayList<Grupo>();
+		this.sesiones = new ArrayList<Jugador>();
+		this.esperandoLibreIndividual = new ArrayList<Jugador>();
+		this.esperandoLibreParejas = new ArrayList<Pareja>();
 
 		try {
 			// si se reinicia el Servidor, o se corta la luz, debo levantar los partidos pendientes!
@@ -49,7 +49,7 @@ public class ServicioCentral {
 	}
 
 	public void registrarJugador(JugadorDTO jugador) throws JugadorException {
-		JugadorEntity jug = obtenerJugadorPorApodoMail(jugador);
+		Jugador jug = obtenerJugadorPorApodoMail(jugador);
 
 		if (jug != null) {
 			if (jug.getApodo().equalsIgnoreCase(jugador.getApodo()))
@@ -59,15 +59,15 @@ public class ServicioCentral {
 		} else {
 			// Podemos registrar el Jugador! 
 			// Suponemos que la validacion de la segunda password la hace la interfaz
-			jug = new JugadorEntity(jugador.getApodo(), jugador.getMail(), jugador.getPassword());
+			jug = new Jugador(jugador.getApodo(), jugador.getMail(), jugador.getPassword());
 
 			JugadorDAO.getinstance().guardarJugador(jug);
 			jugadores.add(jug);
 		}
 	}
 
-	private JugadorEntity obtenerJugadorPorApodoPassword(JugadorDTO jugador) {
-		for (JugadorEntity jug: jugadores) {
+	private Jugador obtenerJugadorPorApodoPassword(JugadorDTO jugador) {
+		for (Jugador jug: jugadores) {
 			if (jug.getApodo().equalsIgnoreCase(jugador.getApodo()) &&
 				// La Password la hacemos sensible a Mayusculas
 				jug.getPassword().equals(jugador.getPassword())) {
@@ -76,7 +76,7 @@ public class ServicioCentral {
 		}
 
 		// no lo encontro en memoria, lo busco en la BD
-		JugadorEntity jug = JugadorDAO.getinstance().buscarJugadorPorApodoPassword(jugador);
+		Jugador jug = JugadorDAO.getinstance().buscarJugadorPorApodoPassword(jugador);
 
 		if (jug != null)
 			jugadores.add(jug); // lo subo a memoria
@@ -84,8 +84,8 @@ public class ServicioCentral {
 		return jug;
 	}
 
-	private JugadorEntity obtenerJugadorPorApodoMail(JugadorDTO jugador) {
-		for (JugadorEntity jug: jugadores) {
+	private Jugador obtenerJugadorPorApodoMail(JugadorDTO jugador) {
+		for (Jugador jug: jugadores) {
 			if (jug.getMail().equalsIgnoreCase(jugador.getMail()) ||
 				jug.getApodo().equalsIgnoreCase(jugador.getApodo())) {
 				return jug;
@@ -93,7 +93,7 @@ public class ServicioCentral {
 		}
 
 		// no lo encontro en memoria, lo busco en la BD
-		JugadorEntity jug = JugadorDAO.getinstance().buscarJugadorPorApodoMail(jugador);
+		Jugador jug = JugadorDAO.getinstance().buscarJugadorPorApodoMail(jugador);
 
 		if (jug != null)
 			jugadores.add(jug); // lo agrego a memoria
@@ -101,14 +101,14 @@ public class ServicioCentral {
 		return jug;
 	}
 
-	private JugadorEntity obtenerJugador(JugadorDTO jugador) {
+	private Jugador obtenerJugador(JugadorDTO jugador) {
 		for (int i = 0; i < jugadores.size(); i++) {
 			if (jugadores.get(i).sosJugador(jugador))
 				return jugadores.get(i);
 		}
 
 		// no lo encontro en memoria, lo busco en la BD
-		JugadorEntity jug = JugadorDAO.getinstance().buscarJugador(jugador);
+		Jugador jug = JugadorDAO.getinstance().buscarJugador(jugador);
 
 		if (jug != null)
 			jugadores.add(jug); // lo agrego a memoria
@@ -118,7 +118,7 @@ public class ServicioCentral {
 
 	public RankingDTO obtenerRankingGeneral(JugadorDTO jugador,
 			ArrayList<RankingDTO> rank) {
-		JugadorEntity jug = obtenerJugador(jugador);
+		Jugador jug = obtenerJugador(jugador);
 		if (jug != null) {
 			RankingDTO devolver = new RankingDTO();
 			devolver = obtenerRanking(jug);
@@ -127,7 +127,7 @@ public class ServicioCentral {
 		return null;
 	}
 
-	public RankingDTO obtenerRanking(JugadorEntity jug) {
+	public RankingDTO obtenerRanking(Jugador jug) {
 		return jug.getRanking().toDTO();
 	}
 	
@@ -145,9 +145,9 @@ public class ServicioCentral {
 
 	public void crearGrupo(GrupoDTO dto, JugadorDTO administrador) throws ControladorException {
 		if (!existeGrupo(dto)) {
-			JugadorEntity jug = obtenerJugador(administrador);
+			Jugador jug = obtenerJugador(administrador);
 			if (jug != null) {
-				GrupoEntity grupo = new GrupoEntity(dto.getNombre(), jug);
+				Grupo grupo = new Grupo(dto.getNombre(), jug);
 				jug.agregarGrupo(grupo);
 //				GrupoDAO.getInstancia().guardarGrupo(grupo);    HACE FALTA ??? EL GRUPO SE ESTARIA GUARDANDO CON EL JUGADOR!
 				grupos.add(grupo);
@@ -158,16 +158,16 @@ public class ServicioCentral {
 	}
 
 	public void agregarJugadorGrupo(List<JugadorDTO> agregar, GrupoDTO dto, JugadorDTO administrador) {
-		GrupoEntity grupo = obtenerGrupo(dto);
+		Grupo grupo = obtenerGrupo(dto);
 
 		if (grupo != null) {
 
-			JugadorEntity jugador = obtenerJugador(administrador);
+			Jugador jugador = obtenerJugador(administrador);
 
 			if (jugador != null) {
 				if (grupo.esAdministrador(jugador)) {
 
-					JugadorEntity jug2;
+					Jugador jug2;
 
 					for (int i = 0; i < agregar.size(); i++) {
 
@@ -187,13 +187,13 @@ public class ServicioCentral {
 	}
 
 
-	private JugadorEntity obtenerJugadorApodo(JugadorDTO jugadorDTO) {
-		for (JugadorEntity jugador: jugadores) {
+	private Jugador obtenerJugadorApodo(JugadorDTO jugadorDTO) {
+		for (Jugador jugador: jugadores) {
 			if (jugador.getApodo().equals(jugadorDTO.getApodo()))
 				return jugador;
 		}
 		jugadores= JugadorDAO.getinstance().obtenerJugadores();
-		for (JugadorEntity jugador: jugadores) {
+		for (Jugador jugador: jugadores) {
 			if (jugador.getApodo().equals(jugadorDTO.getApodo()))
 				return jugador;
 		}	
@@ -204,17 +204,17 @@ public class ServicioCentral {
 	public void armarParejaGrupo(ParejaDTO parejaDTO,
 			GrupoDTO grupoDTO, JugadorDTO administrador) {
 
-		GrupoEntity grupo = obtenerGrupo(grupoDTO);
+		Grupo grupo = obtenerGrupo(grupoDTO);
 				
 		if (grupo != null) {
 
-			JugadorEntity admin = obtenerJugador(administrador);
+			Jugador admin = obtenerJugador(administrador);
 
 			if (admin!= null) {
 
 				if (grupo.esAdministrador(admin)) {
 
-					ArrayList<JugadorEntity> pareja = new ArrayList<JugadorEntity>();
+					ArrayList<Jugador> pareja = new ArrayList<Jugador>();
 					JugadorDTO jug1 = new JugadorDTO();
 					jug1.setApodo(parejaDTO.getJugador1());
 					JugadorDTO jug2 = new JugadorDTO();
@@ -236,16 +236,16 @@ public class ServicioCentral {
 	/* HACER SEGUN DIAGRAMA DE SECUENCIAS */
 	public PartidoDTO crearPartidaGrupo(List<ParejaDTO> parejas, GrupoDTO dto,
 			JugadorDTO administrador) {
-		GrupoEntity grupo = obtenerGrupo(dto);
+		Grupo grupo = obtenerGrupo(dto);
 
 		if (grupo != null) {
 
-			JugadorEntity jugador = obtenerJugador(administrador);
+			Jugador jugador = obtenerJugador(administrador);
 
 			if (jugador != null) {
 				
 				if (grupo.esAdministrador(jugador)) {
-					ArrayList<ParejaEntity> ingresan = new ArrayList<ParejaEntity>();
+					ArrayList<Pareja> ingresan = new ArrayList<Pareja>();
 
 					for (int i = 0; i < parejas.size(); i++) {
 
@@ -258,7 +258,7 @@ public class ServicioCentral {
 						ingresan.get(0).setNumeroPareja(1);
 						ingresan.get(1).setNumeroPareja(2);
 						Date date = new Date();
-						PartidoEntity partido = new PartidoEntity(ingresan,
+						Partido partido = new Partido(ingresan,
 								(Timestamp) date, TipoPartido.Grupo);
 						
 						partido.setEstadoPartido(EstadoPartido.Pendiente);
@@ -279,11 +279,11 @@ public class ServicioCentral {
 	public PartidoDTO armarPartidoIndividual(){
 		
 		if (esperandoLibreIndividual.size()>=4){
-			List<JugadorEntity> jugadoresPosibles = new ArrayList<JugadorEntity>();
-			PartidoEntity partido = null;
+			List<Jugador> jugadoresPosibles = new ArrayList<Jugador>();
+			Partido partido = null;
 			String categoriaMedia = esperandoLibreIndividual.get(esperandoLibreIndividual.size()-1).getCategoria().toString();
 			jugadoresPosibles.add(esperandoLibreIndividual.get(esperandoLibreIndividual.size()-1));
-			for (JugadorEntity j : esperandoLibreIndividual){
+			for (Jugador j : esperandoLibreIndividual){
 				if (!jugadoresPosibles.contains(j) && j.getCategoria().toString().equalsIgnoreCase(categoriaMedia) && jugadoresPosibles.size()<4){
 					//Encontre un jugador distinto de la misma categoría. No los saco de esperandoLibreIndividual hasta terminar el metodo.//
 					jugadoresPosibles.add(j);
@@ -293,9 +293,9 @@ public class ServicioCentral {
 			
 			//Si llegue a armar con la misma categoria//
 			if (jugadoresPosibles.size()==4){
-				ParejaEntity pareja1 = new ParejaEntity(1, jugadoresPosibles.get(0), jugadoresPosibles.get(1));
-				ParejaEntity pareja2 = new ParejaEntity(2, jugadoresPosibles.get(2), jugadoresPosibles.get(3));
-				List<ParejaEntity> parejas = new ArrayList<ParejaEntity>();
+				Pareja pareja1 = new Pareja(1, jugadoresPosibles.get(0), jugadoresPosibles.get(1));
+				Pareja pareja2 = new Pareja(2, jugadoresPosibles.get(2), jugadoresPosibles.get(3));
+				List<Pareja> parejas = new ArrayList<Pareja>();
 				parejas.add(pareja1);
 				parejas.add(pareja2);
 				
@@ -304,7 +304,7 @@ public class ServicioCentral {
 				esperandoLibreIndividual.remove(jugadoresPosibles.get(2));
 				esperandoLibreIndividual.remove(jugadoresPosibles.get(3));
 				
-				partido = new PartidoEntity(parejas, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreIndividual);
+				partido = new Partido(parejas, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreIndividual);
 				partidos.add(partido);
 				
 				partido.setId(PartidoDAO.getInstance().guardarPartido(partido).intValue());
@@ -320,7 +320,7 @@ public class ServicioCentral {
 				
 				//Busco en la mayor, solamente si existe una categoría mayor (si es experto no puedo buscar en una mayor).//
 				if (categoriaMayor != null){
-					for (JugadorEntity j : esperandoLibreIndividual){
+					for (Jugador j : esperandoLibreIndividual){
 						if (!jugadoresPosibles.contains(j) && j.getCategoria().toString().equalsIgnoreCase(categoriaMayor) && jugadoresPosibles.size()<4){
 							//Encontre un jugador distinto en la categoria mayor. No los saco de esperandoLibreIndividual hasta terminar el metodo.//
 							jugadoresPosibles.add(j);
@@ -330,9 +330,9 @@ public class ServicioCentral {
 				
 				//Si todavia no llego a los jugadores, voy a buscar en la menor. Para eso saco los elementos con categoria mayor de la lista de jugadoresPosibles.//
 				
-				List<JugadorEntity> jugadoresBorrar = new ArrayList<JugadorEntity>();
+				List<Jugador> jugadoresBorrar = new ArrayList<Jugador>();
 				if (jugadoresPosibles.size()<4){
-					for (JugadorEntity j : jugadoresPosibles){
+					for (Jugador j : jugadoresPosibles){
 						if (j.getCategoria().toString().equalsIgnoreCase(categoriaMayor)){
 //							jugadoresPosibles.remove(j);
 							jugadoresBorrar.add(j);
@@ -343,15 +343,15 @@ public class ServicioCentral {
 					
 				}else{
 					//Si llegué con categoria original y mayor, compongo las parejas//
-					ParejaEntity pareja1 = new ParejaEntity(1, jugadoresPosibles.get(0), jugadoresPosibles.get(1));
-					ParejaEntity pareja2 = new ParejaEntity(2, jugadoresPosibles.get(2), jugadoresPosibles.get(3));
-					List<ParejaEntity> parejas = new ArrayList<ParejaEntity>();
+					Pareja pareja1 = new Pareja(1, jugadoresPosibles.get(0), jugadoresPosibles.get(1));
+					Pareja pareja2 = new Pareja(2, jugadoresPosibles.get(2), jugadoresPosibles.get(3));
+					List<Pareja> parejas = new ArrayList<Pareja>();
 					parejas.add(pareja1);
 					parejas.add(pareja2);
 
 					//invocar a armarPartido, solamente si tengo al menos 2 de la categoria original//
 					if (parejasCompatibles(jugadoresPosibles, categoriaMedia)){
-						partido = new PartidoEntity(parejas, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreIndividual);
+						partido = new Partido(parejas, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreIndividual);
 						partidos.add(partido);
 
 						esperandoLibreIndividual.remove(jugadoresPosibles.get(0));
@@ -366,7 +366,7 @@ public class ServicioCentral {
 				
 				//Voy a buscar en la menor, solamente si existe//
 				if (categoriaMenor != null){
-					for (JugadorEntity j : esperandoLibreIndividual){
+					for (Jugador j : esperandoLibreIndividual){
 						if (!jugadoresPosibles.contains(j) && j.getCategoria().toString().equalsIgnoreCase(categoriaMenor)){
 							jugadoresPosibles.add(j);
 						}
@@ -376,16 +376,16 @@ public class ServicioCentral {
 				//Si encontre 4 jugadores entre categoria original y menor//
 				if (jugadoresPosibles.size() == 4) {
 					//componer parejas//
-					ParejaEntity pareja1 = new ParejaEntity(1, jugadoresPosibles.get(0), jugadoresPosibles.get(1));
-					ParejaEntity pareja2 = new ParejaEntity(2, jugadoresPosibles.get(2), jugadoresPosibles.get(3));
-					List<ParejaEntity> parejas = new ArrayList<ParejaEntity>();
+					Pareja pareja1 = new Pareja(1, jugadoresPosibles.get(0), jugadoresPosibles.get(1));
+					Pareja pareja2 = new Pareja(2, jugadoresPosibles.get(2), jugadoresPosibles.get(3));
+					List<Pareja> parejas = new ArrayList<Pareja>();
 					parejas.add(pareja1);
 					parejas.add(pareja2);
 
 					//invocar a armarPartido//
 					if (parejasCompatibles(jugadoresPosibles, categoriaMenor)){
 						
-						partido = new PartidoEntity(parejas, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreIndividual);
+						partido = new Partido(parejas, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreIndividual);
 						partidos.add(partido);
 
 						esperandoLibreIndividual.remove(jugadoresPosibles.get(0));
@@ -407,13 +407,13 @@ public class ServicioCentral {
 	
 	public PartidoDTO armarPartidoParejas(){
 		
-		List<ParejaEntity> parejasPosibles = new ArrayList<ParejaEntity>();
-		PartidoEntity partido = null;
+		List<Pareja> parejasPosibles = new ArrayList<Pareja>();
+		Partido partido = null;
 		parejasPosibles.add(esperandoLibreParejas.get(esperandoLibreParejas.size()-1));
 		
 		TipoCategoria categoriaSuperior = parejasPosibles.get(0).obtenerCategoriaSuperior();
 		
-		for (ParejaEntity p : esperandoLibreParejas){
+		for (Pareja p : esperandoLibreParejas){
 			if (p.obtenerCategoriaSuperior().equals(categoriaSuperior) && !parejasPosibles.contains(p) && (!p.tenesJugador(parejasPosibles.get(0).getJugador1()) && !p.tenesJugador(parejasPosibles.get(0).getJugador2()))){
 				//Encontre pareja, armo el partido//
 				parejasPosibles.add(p);
@@ -421,12 +421,12 @@ public class ServicioCentral {
 				parejasPosibles.get(1).setNumeroPareja(2);
 
 				int encontradoParejas = 0;
-				for (ParejaEntity buscar1 : esperandoLibreParejas){
+				for (Pareja buscar1 : esperandoLibreParejas){
 					if (buscar1.tenesJugador(parejasPosibles.get(0).getJugador1()) && buscar1.tenesJugador(parejasPosibles.get(0).getJugador2())){
 						encontradoParejas++;
 					}
 				}
-				for (ParejaEntity buscar2 : esperandoLibreParejas){
+				for (Pareja buscar2 : esperandoLibreParejas){
 					if (buscar2.tenesJugador(parejasPosibles.get(1).getJugador1()) && buscar2.tenesJugador(parejasPosibles.get(1).getJugador2())){
 						encontradoParejas++;
 					}
@@ -434,14 +434,14 @@ public class ServicioCentral {
 
 				if(encontradoParejas>=4){
 										
-					partido = new PartidoEntity(parejasPosibles, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreParejas);
+					partido = new Partido(parejasPosibles, new Timestamp(System.currentTimeMillis()), TipoPartido.LibreParejas);
 					partido.setId(PartidoDAO.getInstance().guardarPartido(partido).intValue());
 					partidos.add(partido);
 	
 					// PREGUNTA: ACA MISMO NO HABRIA QUE QUITARLOS DE LA LISTA DE ESPERA?
 					// algo asi?  "esperandoLibreParejas.remove(...)"
-					List<ParejaEntity> parejasBorrar = new ArrayList<ParejaEntity>();
-					for (ParejaEntity parejaBorrar : esperandoLibreParejas){
+					List<Pareja> parejasBorrar = new ArrayList<Pareja>();
+					for (Pareja parejaBorrar : esperandoLibreParejas){
 						if (!esperandoLibreParejas.isEmpty()){
 							if( (parejaBorrar.tenesJugador(parejasPosibles.get(0).getJugador1()) && parejaBorrar.tenesJugador(parejasPosibles.get(0).getJugador2()) )
 									|| (parejaBorrar.tenesJugador(parejasPosibles.get(1).getJugador1()) && parejaBorrar.tenesJugador(parejasPosibles.get(1).getJugador2()))){
@@ -450,7 +450,7 @@ public class ServicioCentral {
 						}
 					}
 					
-					for (ParejaEntity parejaBorrando : parejasBorrar){
+					for (Pareja parejaBorrando : parejasBorrar){
 						esperandoLibreParejas.remove(parejaBorrando);
 					}
 					
@@ -465,10 +465,10 @@ public class ServicioCentral {
 	}
 
 	public List<PartidoDTO> tengoPartido(JugadorDTO jugadorDTO){
-		JugadorEntity jug = obtenerJugador(jugadorDTO);
+		Jugador jug = obtenerJugador(jugadorDTO);
 
 		List<PartidoDTO> partidosActivos = new ArrayList<PartidoDTO>();
-		for (PartidoEntity p : partidos) {
+		for (Partido p : partidos) {
 			if (p.participoJugador(jug) && !p.estasTerminado()) {
 				PartidoDTO partidoDTO = p.toDTO();
 				partidosActivos.add(partidoDTO);				
@@ -482,10 +482,10 @@ public class ServicioCentral {
 		
 	public PartidoDTO obtenerUltimoPartidoPendienteModalidad (TipoPartido tipoPartido, JugadorDTO jugadorDTO){
 		
-		JugadorEntity jug = obtenerJugador(jugadorDTO);
-		PartidoEntity ultimo = null;
+		Jugador jug = obtenerJugador(jugadorDTO);
+		Partido ultimo = null;
 		
-		for (PartidoEntity p : partidos) {
+		for (Partido p : partidos) {
 			if ((p.participoJugador(jug)) && (!p.estasTerminado()) && (p.getTipoPartido().equals(tipoPartido))) {
 				
 				ultimo = p;
@@ -501,7 +501,7 @@ public class ServicioCentral {
 	
 
 	public PartidoDTO jugarLibreIndividual(JugadorDTO jugador){
-		for(JugadorEntity aux: sesiones)
+		for(Jugador aux: sesiones)
 		{
 			if(aux.sosJugador(jugador)) {
 				esperandoLibreIndividual.add(aux);
@@ -514,9 +514,9 @@ public class ServicioCentral {
 	
 	public void eliminarMiembroGrupo(JugadorDTO jugador, GrupoDTO grupo, JugadorDTO administrador) {
 
-		JugadorEntity aux = obtenerJugadorApodo(jugador);
-		GrupoEntity grup;
-		JugadorEntity administradorReal;
+		Jugador aux = obtenerJugadorApodo(jugador);
+		Grupo grup;
+		Jugador administradorReal;
 		if (aux != null) {
 			grup = obtenerGrupo(grupo);
 			if (grup != null) {
@@ -528,9 +528,9 @@ public class ServicioCentral {
 		}
 	}
 
-	private boolean parejasCompatibles(List<JugadorEntity> jugadoresPosibles, String categoriaMenor) {
+	private boolean parejasCompatibles(List<Jugador> jugadoresPosibles, String categoriaMenor) {
 		int cantMenor = 0;
-		for (JugadorEntity j : jugadoresPosibles){
+		for (Jugador j : jugadoresPosibles){
 			if (j.getCategoria().toString().equalsIgnoreCase(categoriaMenor)){
 				cantMenor++;
 			}	
@@ -549,7 +549,7 @@ public class ServicioCentral {
 	 */
 	public JugadorDTO iniciarSesion(JugadorDTO jugador) throws JugadorException {
 
-		for(JugadorEntity jug: sesiones) {
+		for(Jugador jug: sesiones) {
 			if (jug.getApodo().equals(jugador.getApodo())) {
 				System.out.println("El jugador " + jug.getApodo() + " ya ha iniciado sesion");
 				return jug.toDTO();
@@ -557,7 +557,7 @@ public class ServicioCentral {
 			}
 		}
 
-		JugadorEntity jug = obtenerJugadorPorApodoPassword(jugador);
+		Jugador jug = obtenerJugadorPorApodoPassword(jugador);
 
 		if (jug == null) {
 			System.out.println("Login Incorrecto");
@@ -572,9 +572,9 @@ public class ServicioCentral {
 	}
 
 	public void cerrarSesion(JugadorDTO jugador) throws JugadorException {
-		JugadorEntity remover = null;
+		Jugador remover = null;
 		
-		for (JugadorEntity jug : sesiones){
+		for (Jugador jug : sesiones){
 			if(jug.getApodo().equalsIgnoreCase(jugador.getApodo())){
 				remover = jug;
 			}
@@ -592,7 +592,7 @@ public class ServicioCentral {
 	/* DESARROLLAR CON HQL */
 	public ArrayList<JugadorDTO> obtenerJugadores() {
 
-		ArrayList<JugadorEntity> jug = JugadorDAO.getinstance().obtenerJugadores();
+		ArrayList<Jugador> jug = JugadorDAO.getinstance().obtenerJugadores();
 
 		ArrayList<JugadorDTO> devolver = new ArrayList<JugadorDTO>();
 
@@ -609,11 +609,11 @@ public class ServicioCentral {
 
 		/* No se agregan a Memoria ya que solo son para mostrar a la vista */
 		
-		List<PartidoEntity> partidosFechas = PartidoDAO.getInstance().obtenerPartidosEntreFechas(fechaDesde, fechaHasta, modalidad, jugador);
+		List<Partido> partidosFechas = PartidoDAO.getInstance().obtenerPartidosEntreFechas(fechaDesde, fechaHasta, modalidad, jugador);
 		if(partidosFechas != null)
 		{
 			ArrayList<PartidoDTO> devolver = new ArrayList<PartidoDTO>();
-			for(PartidoEntity partido: partidosFechas){
+			for(Partido partido: partidosFechas){
 				devolver.add(partido.toDTO());
 			}
 			return devolver;
@@ -623,7 +623,7 @@ public class ServicioCentral {
 	}
 
 	public ChicoDTO obtenerChicoDTO(PartidoDTO partido, int chico) throws PartidoException {
-		PartidoEntity p = obtenerPartido(partido);
+		Partido p = obtenerPartido(partido);
 
 		if (p != null)
 			return p.obtenerChicoActivo().toDto();
@@ -639,7 +639,7 @@ public class ServicioCentral {
 
 	public ArrayList<RankingDTO> obtenerRankingGrupo(GrupoDTO grupo,
 			JugadorDTO jugador) {
-		GrupoEntity grup = obtenerGrupo(grupo);
+		Grupo grup = obtenerGrupo(grupo);
 		if (grup != null) {
 
 			return grup.obtenerRanking();
@@ -650,11 +650,11 @@ public class ServicioCentral {
 	}
 
 	/* DESARROLLAR */
-	public ParejaEntity armarPareja(ArrayList<JugadorEntity> jugadores) {
+	public Pareja armarPareja(ArrayList<Jugador> jugadores) {
 		return null;
 	}
 
-	public GrupoEntity obtenerGrupo(GrupoDTO dto) {
+	public Grupo obtenerGrupo(GrupoDTO dto) {
 		for (int i = 0; i < grupos.size(); i++) {
 			if (grupos.get(i).getNombre().equals(dto.getNombre()))
 				return grupos.get(i);
@@ -662,7 +662,7 @@ public class ServicioCentral {
 
 		/* No lo encontro en memoria */
 
-		GrupoEntity grupo = GrupoDAO.getInstancia().buscarGrupoPorNombre(dto);
+		Grupo grupo = GrupoDAO.getInstancia().buscarGrupoPorNombre(dto);
 
 		if (grupo != null) {
 			grupos.add(grupo); /* lo agrego a memoria */
@@ -672,7 +672,7 @@ public class ServicioCentral {
 	}
 
 	public ArrayList<GrupoDTO> obtenerGrupos() {
-		List<GrupoEntity> grup = GrupoDAO.getInstancia().obtenerGrupos();
+		List<Grupo> grup = GrupoDAO.getInstancia().obtenerGrupos();
 
 		ArrayList<GrupoDTO> devolver = new ArrayList<GrupoDTO>();
 
@@ -684,7 +684,7 @@ public class ServicioCentral {
 	}
 
 	private boolean estaLogueado(JugadorDTO jugador) {
-		for (JugadorEntity jug: sesiones) {
+		for (Jugador jug: sesiones) {
 			if (jug.sosJugador(jugador))
 				return true;
 		}
@@ -692,12 +692,12 @@ public class ServicioCentral {
 	}
 
 	public List<TipoEnvite> obtenerEnvitesDisponibles(PartidoDTO partido, JugadorDTO jugador) throws ControladorException, PartidoException {
-		PartidoEntity part = obtenerPartido(partido);
+		Partido part = obtenerPartido(partido);
 
 		if (part != null) {
 			if (estaLogueado(jugador)) {
 				// obtengo la mano activa
-				ManoEntity mano = part.obtenerChicoActivo().obtenerUltimaMano();
+				Mano mano = part.obtenerChicoActivo().obtenerUltimaMano();
 				// verifico si el jugador que le toca jugar es el que envio la peticion!
 				if (mano.getJugadorActual().sosJugador(jugador)) {
 					return part.obtenerEnvitesPosibles();
@@ -709,14 +709,14 @@ public class ServicioCentral {
 			throw new ControladorException("No existe el partido");
 	}
 	
-	private PartidoEntity obtenerPartido(PartidoDTO partido) throws PartidoException {
-		for(PartidoEntity p: partidos) {
+	private Partido obtenerPartido(PartidoDTO partido) throws PartidoException {
+		for(Partido p: partidos) {
 			if(p.sosPartido(partido))
 				return p;
 		}
 
 		// no lo encontro en memoria, lo busco en la BD
-		PartidoEntity p = PartidoDAO.getInstance().buscarPartido(partido);
+		Partido p = PartidoDAO.getInstance().buscarPartido(partido);
 
 		if (p != null)
 			partidos.add(p);
@@ -724,22 +724,22 @@ public class ServicioCentral {
 		return p;
 	}
 
-	private MovimientoEntity crearMovimientoFromDTO(JugadorEntity jugador, MovimientoDTO movimiento) {
+	private Movimiento crearMovimientoFromDTO(Jugador jugador, MovimientoDTO movimiento) {
 		if (movimiento instanceof CartaTiradaDTO) {
-			CartaEntity carta = new CartaEntity();
+			Carta carta = new Carta();
 			carta.setId(((CartaTiradaDTO) movimiento).getCartaJugador().getCarta().getId());
 			carta.setPalo(((CartaTiradaDTO) movimiento).getCartaJugador().getCarta().getPalo());
 			carta.setNumero(((CartaTiradaDTO) movimiento).getCartaJugador().getCarta().getNumero());
 			carta.setPosicionValor(((CartaTiradaDTO) movimiento).getCartaJugador().getCarta().getPosicionValor());
 
-			CartaJugadorEntity cartaJugador = new CartaJugadorEntity(jugador, carta, true);
+			CartaJugador cartaJugador = new CartaJugador(jugador, carta, true);
 
-			CartaTiradaEntity cartaTirada = new CartaTiradaEntity(cartaJugador);
+			CartaTirada cartaTirada = new CartaTirada(cartaJugador);
 			cartaTirada.setFechaHora(movimiento.getFechaHora());
 
 			return cartaTirada;
 		} else if (movimiento instanceof EnviteDTO) {
-			EnviteEntity envite = new EnviteEntity(((EnviteDTO) movimiento).getTipoEnvite());
+			Envite envite = new Envite(((EnviteDTO) movimiento).getTipoEnvite());
 			envite.setJugador(jugador);
 			envite.setFechaHora(movimiento.getFechaHora());
 
@@ -751,13 +751,13 @@ public class ServicioCentral {
 
 	public void nuevoMovimientoPartido(PartidoDTO partido, JugadorDTO jugador, MovimientoDTO movimiento) throws ControladorException, PartidoException, BazaException, JugadorException {
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
 			// fabrico los objetos a partir de los DTOs
-			JugadorEntity jug = obtenerJugador(jugador);
-			MovimientoEntity mov = crearMovimientoFromDTO(jug, movimiento);
+			Jugador jug = obtenerJugador(jugador);
+			Movimiento mov = crearMovimientoFromDTO(jug, movimiento);
 			
 			part.nuevoMovimiento(jug, mov);
 						
@@ -770,7 +770,7 @@ public class ServicioCentral {
 		
 		if(estaLogueado(jugador)){
 			
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 		
 			if (part == null)
 				throw new ControladorException("No existe el partido");
@@ -786,7 +786,7 @@ public class ServicioCentral {
 	public List<CartaJugadorDTO> obtenerCartasJugador (PartidoDTO partido, JugadorDTO jugador) throws ControladorException, PartidoException{
 		
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
@@ -802,7 +802,7 @@ public class ServicioCentral {
 		
 		partidos.addAll(PartidoDAO.getInstance().obtenerPartidosPendientes());
 		
-		for(PartidoEntity partido: partidos) {
+		for(Partido partido: partidos) {
 			// levanto toda la informacion que no esta persistida!
 			partido.levantar();
 		}
@@ -815,16 +815,16 @@ public class ServicioCentral {
 	public List<PuntajeParejaDTO> obtenerPuntajeChico (PartidoDTO partido, JugadorDTO jugador) throws PartidoException, ControladorException{
 
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
-			JugadorEntity jug = obtenerJugador(jugador);
+			Jugador jug = obtenerJugador(jugador);
 			
 			if(part.participoJugador(jug)){
 				
 				List<PuntajeParejaDTO> puntajes = new ArrayList<PuntajeParejaDTO>();
-				for(PuntajeParejaEntity punt : part.obtenerChicoActivo().getPuntajes()){
+				for(PuntajePareja punt : part.obtenerChicoActivo().getPuntajes()){
 					
 					puntajes.add(punt.toDTO());
 				}
@@ -842,16 +842,16 @@ public class ServicioCentral {
 	public List<MovimientoDTO> obtenerMovimientosUltimaBaza (PartidoDTO partido, JugadorDTO jugador) throws ControladorException, PartidoException{
 
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
-			JugadorEntity jug = obtenerJugador(jugador);
+			Jugador jug = obtenerJugador(jugador);
 			
 			if(part.participoJugador(jug)){
 				
 				List<MovimientoDTO> movimientos = new ArrayList<MovimientoDTO>();
-				for(MovimientoEntity movimiento : part.obtenerChicoActivo().obtenerUltimaMano().obtenerUltimaBaza().getTurnosBaza()){
+				for(Movimiento movimiento : part.obtenerChicoActivo().obtenerUltimaMano().obtenerUltimaBaza().getTurnosBaza()){
 					
 					movimientos.add(movimiento.toDTO());
 				}
@@ -867,11 +867,11 @@ public class ServicioCentral {
 	
 	
 	public List<ParejaDTO> obtenerParejasPartido(PartidoDTO partido) throws ControladorException{
-		PartidoEntity part;
+		Partido part;
 		try {
 			part = obtenerPartido(partido);
 			List<ParejaDTO> parejas = new ArrayList<ParejaDTO>();
-			for(ParejaEntity pareja: part.getParejas()){
+			for(Pareja pareja: part.getParejas()){
 				parejas.add(pareja.toDTO());
 				
 			}
@@ -885,11 +885,11 @@ public class ServicioCentral {
 	public boolean partidoEstaTerminado (PartidoDTO partido, JugadorDTO jugador) throws ControladorException, PartidoException{
 		
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
-			JugadorEntity jug = obtenerJugador(jugador);
+			Jugador jug = obtenerJugador(jugador);
 			
 			if(part.participoJugador(jug)){
 				
@@ -912,7 +912,7 @@ public class ServicioCentral {
 	public List<JugadorDTO> obtenerGanadoresBazas (PartidoDTO partido, JugadorDTO jugador) throws ControladorException, PartidoException{
 		
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
@@ -929,7 +929,7 @@ public class ServicioCentral {
 	public ManoDTO obtenerUltimaManoActiva (PartidoDTO partido, JugadorDTO jugador) throws ControladorException, PartidoException{
 		
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 
@@ -947,7 +947,7 @@ public class ServicioCentral {
 		
 		if (estaLogueado(jugador)) {
 			
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 			{
 				//no est� en memoria
@@ -968,8 +968,8 @@ public class ServicioCentral {
 				//verifico si realmente el partido esta terminado 
 				
 				List<MovimientoDTO> devolver = new ArrayList<MovimientoDTO>();
-				List<MovimientoEntity> movimientos = part.obtenerProximoMovimiento(ultimoMovimiento);
-				for(MovimientoEntity mov: movimientos){
+				List<Movimiento> movimientos = part.obtenerProximoMovimiento(ultimoMovimiento);
+				for(Movimiento mov: movimientos){
 					devolver.add(mov.toDTO());
 				}
 				return devolver;
@@ -991,10 +991,10 @@ public class ServicioCentral {
 		if (estaLogueado(jugador)) {
 			
 			List<PartidoDTO> devolver = new ArrayList<PartidoDTO>();
-			List<PartidoEntity> partidosLevantados;
+			List<Partido> partidosLevantados;
 			try {
 				partidosLevantados = PartidoDAO.getInstance().levantarPartidosTerminadosJugador(jugador);
-				for(PartidoEntity part: partidosLevantados){
+				for(Partido part: partidosLevantados){
 					partidos.add(part);
 					devolver.add(part.toDTO());
 				}
@@ -1016,7 +1016,7 @@ public class ServicioCentral {
 	public List<ChicoDTO> obtenerResultadoFinalPartido (JugadorDTO jugador, PartidoDTO partido) throws ControladorException, PartidoException{
 		
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 			
@@ -1024,11 +1024,11 @@ public class ServicioCentral {
 				List<ChicoDTO> devolver = new ArrayList<ChicoDTO>();
 				ChicoDTO agregar = null;
 				List<PuntajeParejaDTO> puntajesAgregar = null;
-				for(ChicoEntity chico: part.getChicos()){
+				for(Chico chico: part.getChicos()){
 				
 					agregar = new ChicoDTO();
 					puntajesAgregar = new ArrayList<PuntajeParejaDTO>();
-					for(PuntajeParejaEntity puntaje: chico.getPuntajes())
+					for(PuntajePareja puntaje: chico.getPuntajes())
 					{
 						puntajesAgregar.add(puntaje.toDTO());
 					}
@@ -1058,14 +1058,14 @@ public class ServicioCentral {
 		
 		
 		if (estaLogueado(jugador)) {
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			List<CartaJugadorDTO> devolver = new ArrayList<CartaJugadorDTO>();
 			if (part == null)
 				throw new ControladorException("No existe el partido");
 			
 			if(part.estasTerminado()){
 				
-				List<CartaJugadorEntity> cartas;
+				List<CartaJugador> cartas;
 				
 				if(movimiento == null)
 				{
@@ -1081,7 +1081,7 @@ public class ServicioCentral {
 								
 				}
 				
-				for(CartaJugadorEntity carta: cartas){
+				for(CartaJugador carta: cartas){
 					devolver.add(carta.toDTO());
 				}
 				return devolver;
@@ -1102,7 +1102,7 @@ public class ServicioCentral {
 		
 		if (estaLogueado(jugador)) {
 			
-			PartidoEntity part = obtenerPartido(partido);
+			Partido part = obtenerPartido(partido);
 			if (part == null)
 			{
 				//no est� en memoria
@@ -1122,7 +1122,7 @@ public class ServicioCentral {
 	}
 
 	public PartidoDTO jugarLibreParejas(ParejaDTO parejaDTO) throws ControladorException {
-		ParejaEntity p = estanEsperando(parejaDTO);
+		Pareja p = estanEsperando(parejaDTO);
 		// Si no estan esperando
 		if (p == null) {
 			// los agrego
@@ -1131,13 +1131,13 @@ public class ServicioCentral {
 			JugadorDTO jugDTO2 = new JugadorDTO();
 			jugDTO2.setApodo(parejaDTO.getJugador2());
 
-			JugadorEntity jugador1 = obtenerJugadorApodo(jugDTO1);
-			JugadorEntity jugador2 = obtenerJugadorApodo(jugDTO2);
+			Jugador jugador1 = obtenerJugadorApodo(jugDTO1);
+			Jugador jugador2 = obtenerJugadorApodo(jugDTO2);
 			
 			//Esta condicion es TRUE solamente cuando ambos jugadores existen//
 			if (jugador1 != null && jugador2 != null){
 
-				p = new ParejaEntity();
+				p = new Pareja();
 				p.setJugador1(jugador1);
 				p.setJugador2(jugador2);
 				int idPareja = ParejaDAO.getinstance().guardarPareja(p);
@@ -1152,7 +1152,7 @@ public class ServicioCentral {
 		return armarPartidoParejas();
 	}
 
-	private ParejaEntity estanEsperando(ParejaDTO pareja) {
+	private Pareja estanEsperando(ParejaDTO pareja) {
 		// TODO Auto-generated method stub
 		//No entro a verificar si estan esperando si no tengo nada en la lista//
 		if(!esperandoLibreParejas.isEmpty()){
@@ -1162,7 +1162,7 @@ public class ServicioCentral {
 			jug1.setApodo(pareja.getJugador1());
 			
 			//Voy a buscar a los jugadores, si no lo encuentro lo seteo null para luego salir del metodo//
-			JugadorEntity jugador1 = obtenerJugadorApodo(jug1);
+			Jugador jugador1 = obtenerJugadorApodo(jug1);
 			if (jugador1 != null) {
 				jug1 = jugador1.toDTO();
 			} else{
@@ -1172,7 +1172,7 @@ public class ServicioCentral {
 			JugadorDTO jug2 = new JugadorDTO();
 			jug2.setApodo(pareja.getJugador2());
 
-			JugadorEntity jugador2 = obtenerJugadorApodo(jug2);
+			Jugador jugador2 = obtenerJugadorApodo(jug2);
 			if (jugador2 != null){
 				jug2 = jugador2.toDTO();
 			} else{
@@ -1183,7 +1183,7 @@ public class ServicioCentral {
 			//Si estan una sola vez los vuelvo a agregar para luego poder armar el partido//
 			boolean encontrePrimeraVez = false;
 			if (jug1 != null && jug2 != null){
-				for (ParejaEntity p : esperandoLibreParejas){
+				for (Pareja p : esperandoLibreParejas){
 					if (p.tenesJugador(jug1)){
 						if (p.tenesJugador(jug2)){
 							if(encontrePrimeraVez){	
@@ -1204,11 +1204,11 @@ public class ServicioCentral {
 		
 		List<MiembroGrupoDTO> devolver = new ArrayList<MiembroGrupoDTO>();
 		
-		GrupoEntity grup = obtenerGrupo(grupo);
+		Grupo grup = obtenerGrupo(grupo);
 			
 		if(grup !=null)
 		{
-			for(MiembroGrupoEntity miembro: grup.getMiembros()){
+			for(MiembroGrupo miembro: grup.getMiembros()){
 					
 				devolver.add(miembro.toDTO());
 			}
@@ -1225,11 +1225,11 @@ public class ServicioCentral {
 
 	public List<PartidoDTO> obtenerPartidosGrupo(GrupoDTO grupoSeleccionado, JugadorDTO jugadorDTO) {
 		// TODO Auto-generated method stub
-		JugadorEntity jug = obtenerJugador(jugadorDTO);
-		GrupoEntity grupo = obtenerGrupo(grupoSeleccionado);
+		Jugador jug = obtenerJugador(jugadorDTO);
+		Grupo grupo = obtenerGrupo(grupoSeleccionado);
 		
 		List<PartidoDTO> partidosGrupo = new ArrayList<PartidoDTO>();
-		for (PartidoEntity p : partidos) {
+		for (Partido p : partidos) {
 			if (grupo.tenesPartido(p) && (p.participoJugador(jug)) && (!p.estasTerminado()) && (p.getTipoPartido().equals(TipoPartido.Grupo))) {
 				partidosGrupo.add(p.toDTO());
 			}

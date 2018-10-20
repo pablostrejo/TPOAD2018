@@ -6,7 +6,7 @@ import dtos.PuntajeParejaDTO;
 
 @Entity
 @Table(name = "PuntajesPareja")
-public class PuntajeParejaEntity {
+public class PuntajePareja {
 	@Id
 	@Column(name = "id_puntaje", nullable = false)
 	@GeneratedValue
@@ -14,15 +14,15 @@ public class PuntajeParejaEntity {
 //	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_pareja")
-	private ParejaEntity pareja;
+	private Pareja pareja;
 	@Column
 	private int puntaje;
 
 
-	public PuntajeParejaEntity() {
+	public PuntajePareja() {
 	}
 
-	public PuntajeParejaEntity(ParejaEntity pareja, int puntaje) {
+	public PuntajePareja(Pareja pareja, int puntaje) {
 		this.pareja = pareja;
 		this.puntaje = puntaje;
 	}
@@ -43,11 +43,11 @@ public class PuntajeParejaEntity {
 		this.id = id;
 	}
 
-	public ParejaEntity getPareja() {
+	public Pareja getPareja() {
 		return pareja;
 	}
 
-	public void setPareja(ParejaEntity pareja) {
+	public void setPareja(Pareja pareja) {
 		this.pareja = pareja;
 	}
 

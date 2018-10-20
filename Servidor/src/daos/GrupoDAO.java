@@ -7,8 +7,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import dtos.GrupoDTO;
-import entities.GrupoEntity;
-import entities.PartidoEntity;
+import entities.Grupo;
+import entities.Partido;
 import hibernate.HibernateUtil;
 
 public class GrupoDAO {
@@ -34,12 +34,12 @@ public class GrupoDAO {
 	}
 	
 	
-	public GrupoEntity buscarGrupo (GrupoDTO grupo) {
+	public Grupo buscarGrupo (GrupoDTO grupo) {
 		Session s = this.getSession();
-		GrupoEntity devolver;
+		Grupo devolver;
 		try{
 			
-			devolver = (GrupoEntity) s.createQuery("Select g from Grupo g inner join g.miembros where g.id =:id").setParameter("id", grupo.getId()).uniqueResult();
+			devolver = (Grupo) s.createQuery("Select g from Grupo g inner join g.miembros where g.id =:id").setParameter("id", grupo.getId()).uniqueResult();
 			s.close();
 			return devolver;
 		} catch(Exception e) {
@@ -49,11 +49,11 @@ public class GrupoDAO {
 		}
 	}
 	
-	public GrupoEntity buscarGrupoPorNombre (GrupoDTO grupo){		
+	public Grupo buscarGrupoPorNombre (GrupoDTO grupo){		
 		Session s = this.getSession();
-		GrupoEntity devolver;
+		Grupo devolver;
 		try {
-			devolver = (GrupoEntity) s.createQuery("Select g from Grupo g left join g.miembros where g.nombre =:nombre").setParameter("nombre", grupo.getNombre()).uniqueResult();
+			devolver = (Grupo) s.createQuery("Select g from Grupo g left join g.miembros where g.nombre =:nombre").setParameter("nombre", grupo.getNombre()).uniqueResult();
 			s.close();
 			return devolver;
 		} catch(Exception e) {
@@ -63,7 +63,7 @@ public class GrupoDAO {
 		}
 	}
 	
-	public void guardarGrupo (GrupoEntity grupo){
+	public void guardarGrupo (Grupo grupo){
 		
 		Transaction t =null;
 		Session s = this.getSession();
@@ -103,9 +103,9 @@ public class GrupoDAO {
 //	
 	
 	@SuppressWarnings("unchecked")
-	public List<PartidoEntity> buscarPartidos (GrupoEntity grupo) {
+	public List<Partido> buscarPartidos (Grupo grupo) {
 		Session s = this.getSession();
-		List<PartidoEntity> devolver;
+		List<Partido> devolver;
 		try {
 			devolver = s.createQuery("select p from Grupo g inner join g.partidos p where g.id = :id")
 					.setParameter("id", grupo.getId()).list();
@@ -120,9 +120,9 @@ public class GrupoDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<GrupoEntity> obtenerGrupos() {		
+	public List<Grupo> obtenerGrupos() {		
 		Session s = this.getSession();
-		List<GrupoEntity> devolver;
+		List<Grupo> devolver;
 		try {
 			devolver = s.createQuery("Select g from Grupo g inner join g.partidos").list();
 			s.close();

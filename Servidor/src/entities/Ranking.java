@@ -12,7 +12,7 @@ import enums.TipoCategoria;
 
 @Entity
 @Table (name = "Rankings")
-public class RankingEntity {
+public class Ranking {
 	@Id
 	@Column (name = "id_ranking")
 	@GeneratedValue
@@ -22,15 +22,15 @@ public class RankingEntity {
 	@JoinTable (name = "Ranking_Partido",
 				joinColumns = {@JoinColumn (name = "id_ranking")},
 				inverseJoinColumns = {@JoinColumn (name = "id_partido")})
-	private List<PartidoEntity> partidos;
+	private List<Partido> partidos;
 
 	@Column
 	private int puntos;
 	@Column (name = "cant_ganadas")
 	private int cantidadGanadas;
 	
-	public RankingEntity() {
-		this.partidos = new ArrayList<PartidoEntity>();
+	public Ranking() {
+		this.partidos = new ArrayList<Partido>();
 		this.puntos = 0;
 		this.cantidadGanadas = 0;
 	}
@@ -60,12 +60,12 @@ public class RankingEntity {
 		this.id = id;
 	}
 
-	public List<PartidoEntity> getPartidos() {
+	public List<Partido> getPartidos() {
 		partidos = RankingDAO.getInstance().obtenerPartidosRanking(this);
 		return partidos;
 	}
 
-	public void setPartidos(ArrayList<PartidoEntity> partidos) {
+	public void setPartidos(ArrayList<Partido> partidos) {
 		this.partidos = partidos;
 	}
 
@@ -90,7 +90,7 @@ public class RankingEntity {
 		return puntos/partidos.size();
 	}
 	
-	public void actualizar(PartidoEntity part, int punt){
+	public void actualizar(Partido part, int punt){
 		
 		partidos.add(part);
 		

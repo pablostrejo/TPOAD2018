@@ -7,19 +7,19 @@ import dtos.CartaTiradaDTO;
 
 @Entity
 @DiscriminatorValue("ct")
-public class CartaTiradaEntity extends MovimientoEntity {
+public class CartaTirada extends Movimiento {
 
 //	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OneToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_cartaJugador")
-	private CartaJugadorEntity cartaJugador;
+	private CartaJugador cartaJugador;
 
-	public CartaTiradaEntity(CartaJugadorEntity cartaJugador) {
+	public CartaTirada(CartaJugador cartaJugador) {
 		super();
 		this.cartaJugador = cartaJugador;
 	}
 
-	public CartaTiradaEntity() {
+	public CartaTirada() {
 	}
 	
 	public CartaTiradaDTO toDTO() {
@@ -34,11 +34,11 @@ public class CartaTiradaEntity extends MovimientoEntity {
 		return dto;
 	}
 	
-	public CartaJugadorEntity getCartaJugador() {
+	public CartaJugador getCartaJugador() {
 		return cartaJugador;
 	}
 
-	public void setCartaJugador(CartaJugadorEntity cartaJugador) {
+	public void setCartaJugador(CartaJugador cartaJugador) {
 		this.cartaJugador = cartaJugador;
 	}
 	

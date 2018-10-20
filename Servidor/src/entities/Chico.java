@@ -21,7 +21,7 @@ import exceptions.PartidoException;
 
 @Entity
 @Table (name = "Chicos")
-public class ChicoEntity {
+public class Chico {
 	
 	@Id
 	@Column (name = "id_chico", nullable = false)
@@ -32,16 +32,16 @@ public class ChicoEntity {
 	private int numeroChico;
 
 	@Transient
-	private PartidoEntity partido; //se utiliza para reemplazar los observers
+	private Partido partido; //se utiliza para reemplazar los observers
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_chico")
-	private List<ManoEntity> manos;
+	private List<Mano> manos;
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinColumn (name = "id_chico")
-	private List<PuntajeParejaEntity> puntajes;
+	private List<PuntajePareja> puntajes;
 
 	@Column (name = "puntaje_maximo")
 	private int puntajeMaximo;
@@ -50,28 +50,28 @@ public class ChicoEntity {
 	private boolean terminado;
 
 
-	public ChicoEntity() {
+	public Chico() {
 		
 	}
 
-	public ChicoEntity(PartidoEntity partido,int numeroChico, int puntajeMaximo, List<ParejaEntity> parejas) {
+	public Chico(Partido partido,int numeroChico, int puntajeMaximo, List<Pareja> parejas) {
 		this.numeroChico = numeroChico;
 		this.partido = partido;
-		this.manos = new ArrayList<ManoEntity>();
-		this.puntajes = new ArrayList<PuntajeParejaEntity>();
+		this.manos = new ArrayList<Mano>();
+		this.puntajes = new ArrayList<PuntajePareja>();
 		this.puntajeMaximo = puntajeMaximo;
 		this.terminado = false;
 		
-		this.puntajes.add(new PuntajeParejaEntity(parejas.get(0), 0));
-		this.puntajes.add(new PuntajeParejaEntity(parejas.get(1), 0));
+		this.puntajes.add(new PuntajePareja(parejas.get(0), 0));
+		this.puntajes.add(new PuntajePareja(parejas.get(1), 0));
 
-		List<JugadorEntity> ordenInicial = new ArrayList<JugadorEntity>();
+		List<Jugador> ordenInicial = new ArrayList<Jugador>();
 		ordenInicial.add(parejas.get(0).getJugador1());
 		ordenInicial.add(parejas.get(1).getJugador1());
 		ordenInicial.add(parejas.get(0).getJugador2());
 		ordenInicial.add(parejas.get(1).getJugador2());
 
-		this.manos.add(new ManoEntity(this, 1, ordenInicial, puntajes));
+		this.manos.add(new Mano(this, 1, ordenInicial, puntajes));
 	}
 
 	public ChicoDTO toDto (){
@@ -111,11 +111,11 @@ public class ChicoEntity {
 		this.numeroChico = numeroChico;
 	}
 
-	public void setManos(List<ManoEntity> manos) {
+	public void setManos(List<Mano> manos) {
 		this.manos = manos;
 	}
 
-	public void setPuntajes(List<PuntajeParejaEntity> puntajes) {
+	public void setPuntajes(List<PuntajePareja> puntajes) {
 		this.puntajes = puntajes;
 	}
 
@@ -127,15 +127,15 @@ public class ChicoEntity {
 		this.id = id;
 	}
 
-	public List<ManoEntity> getManos() {
+	public List<Mano> getManos() {
 		return manos;
 	}
 
-	public void setManos(ArrayList<ManoEntity> manos) {
+	public void setManos(ArrayList<Mano> manos) {
 		this.manos = manos;
 	}
 
-	public List<PuntajeParejaEntity> getPuntajes() {
+	public List<PuntajePareja> getPuntajes() {
 		return puntajes;
 	}
 
@@ -147,7 +147,7 @@ public class ChicoEntity {
 		this.puntajeMaximo = puntajeMaximo;
 	}
 
-	public ManoEntity obtenerUltimaMano() {
+	public Mano obtenerUltimaMano() {
 //		Mano mano = null;
 //
 //		for(int i=0; i<manos.size(); i++) {
@@ -166,7 +166,7 @@ public class ChicoEntity {
 		return manos.get(manos.size() - 1);
 	}
 
-	public void actualizarPuntajePareja(int puntaje, ParejaEntity pareja) throws PartidoException, JugadorException {
+	public void actualizarPuntajePareja(int puntaje, Pareja pareja) throws PartidoException, JugadorException {
 		for(int i=0; i<puntajes.size(); i++){
 			if(puntajes.get(i).getPareja().getNumeroPareja() == pareja.getNumeroPareja()){
 				
@@ -186,20 +186,20 @@ public class ChicoEntity {
 	}
 
 	public void nuevaMano() {
-		ManoEntity ultimaMano = obtenerUltimaMano();
+		Mano ultimaMano = obtenerUltimaMano();
 
-		List<JugadorEntity> ordenJuego = ultimaMano.getOrdenJuego();
+		List<Jugador> ordenJuego = ultimaMano.getOrdenJuego();
 
 		// Recalculo orden juego. El jugador que estaba primero lo pongo al final de la lista		
-		JugadorEntity jug = ordenJuego.get(0);
+		Jugador jug = ordenJuego.get(0);
 		ordenJuego.remove(jug);
 		ordenJuego.add(jug);
 
-		ManoEntity nuevaMano = new ManoEntity(this, ultimaMano.getNumeroMano() + 1, ordenJuego, puntajes);
+		Mano nuevaMano = new Mano(this, ultimaMano.getNumeroMano() + 1, ordenJuego, puntajes);
 		manos.add(nuevaMano);
 	}
 
-	public ParejaEntity obtenerParejaGanadora() {
+	public Pareja obtenerParejaGanadora() {
 		if (terminado) {
 			if(puntajes.get(0).getPuntaje() >= puntajeMaximo)
 				return puntajes.get(0).getPareja();
@@ -210,7 +210,7 @@ public class ChicoEntity {
 		return null;		
 	}
 	
-	public JugadorEntity obtenerTurnoJugador() {
+	public Jugador obtenerTurnoJugador() {
 		
 		return obtenerUltimaMano().getJugadorActual();
 //		if(tocaCarta() == true) { // no hay que contestar envite, toca tirar carta
@@ -222,34 +222,34 @@ public class ChicoEntity {
 	}
 	
 	public boolean tocaCarta() {
-		ManoEntity mano = obtenerUltimaMano(); // obtengo la ultima mano
+		Mano mano = obtenerUltimaMano(); // obtengo la ultima mano
 
 		return mano.tocaCartaMano();
 	}
 
-	public void agregarMovimiento(JugadorEntity jugador, MovimientoEntity movimiento) throws PartidoException, BazaException, JugadorException {
+	public void agregarMovimiento(Jugador jugador, Movimiento movimiento) throws PartidoException, BazaException, JugadorException {
 		obtenerUltimaMano().agregarMovimiento(jugador, movimiento);
 	}
 
-	public void levantar(PartidoEntity partido) {
+	public void levantar(Partido partido) {
 		//Solo me interesa Levantar aquel que esta activo
 		if(partido.obtenerChicoActivo().getId() == this.id){
 			this.partido = partido;
-			for(ManoEntity mano: manos){
+			for(Mano mano: manos){
 				mano.levantar(this);
 			}
 		}
 	}
 	
-	public ManoEntity obtenerAnteUltimaMano() {
+	public Mano obtenerAnteUltimaMano() {
 		if(manos.size() >= 2)
 			return manos.get(manos.size()-2);
 		else
 			return null;
 	}
 
-	public List<JugadorEntity> getOrdenInicial() {
-		List<JugadorEntity> orden = new ArrayList<JugadorEntity>();
+	public List<Jugador> getOrdenInicial() {
+		List<Jugador> orden = new ArrayList<Jugador>();
 		
 		orden.add(partido.getParejas().get(0).getJugador1());
 		orden.add(partido.getParejas().get(1).getJugador1());
@@ -261,7 +261,7 @@ public class ChicoEntity {
 
 	public boolean tenesMovimiento(MovimientoDTO ultimoMovimiento) {
 		
-		for(ManoEntity mano: manos){
+		for(Mano mano: manos){
 			
 			if(mano.tenesMovimiento(ultimoMovimiento))
 			{
@@ -271,9 +271,9 @@ public class ChicoEntity {
 		return false;
 	}
 
-	public List<MovimientoEntity> getProximoMovimiento(MovimientoDTO ultimoMovimiento) throws ChicoException, ManoException {
+	public List<Movimiento> getProximoMovimiento(MovimientoDTO ultimoMovimiento) throws ChicoException, ManoException {
 		//no va a entrar aca sin saber que tiene el movimiento
-		for(ManoEntity mano: manos){
+		for(Mano mano: manos){
 			if(mano.tenesMovimiento(ultimoMovimiento)==true)
 				return mano.getProximoMovimiento(ultimoMovimiento);
 		}
@@ -281,10 +281,10 @@ public class ChicoEntity {
 		throw new ChicoException("Error al obtener el Proximo Movimiento en Chico");
 	}
 
-	public List<CartaJugadorEntity> getCartasJugadoresPartido(MovimientoDTO movimiento) throws ChicoException {
+	public List<CartaJugador> getCartasJugadoresPartido(MovimientoDTO movimiento) throws ChicoException {
 		
 		
-		for(ManoEntity mano: manos){
+		for(Mano mano: manos){
 			
 			if(mano.tenesMovimiento(movimiento)){
 				return mano.getCartasJugador();

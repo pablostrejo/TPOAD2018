@@ -24,7 +24,7 @@ import exceptions.JugadorException;
 
 @Entity
 @Table(name = "Jugadores")
-public class JugadorEntity {
+public class Jugador {
 
 	@Id
 	@Column(name = "id_jugador", nullable = false)
@@ -35,7 +35,7 @@ public class JugadorEntity {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) 
 	@JoinColumn(name = "id_ranking")
-	private RankingEntity ranking;
+	private Ranking ranking;
 
 	@Column(columnDefinition = "varchar(50)")
 	private String mail;
@@ -48,18 +48,18 @@ public class JugadorEntity {
 	@JoinTable(name = "Grupo_Jugador",
 		joinColumns = { @JoinColumn(name = "id_jugador") },
 		inverseJoinColumns = { @JoinColumn(name = "id_grupo") })
-	private List<GrupoEntity> grupos;
+	private List<Grupo> grupos;
 
-	public JugadorEntity() {
+	public Jugador() {
 	}
 
-	public JugadorEntity(String apodo, String mail, String password) {
+	public Jugador(String apodo, String mail, String password) {
 		this.apodo = apodo;
-		this.ranking = new RankingEntity();
+		this.ranking = new Ranking();
 		this.mail = mail;
 		this.password = password;
 		this.categoria = TipoCategoria.Novato;
-		this.grupos = new ArrayList<GrupoEntity>();
+		this.grupos = new ArrayList<Grupo>();
 	}
 
 	public JugadorDTO toDTO() {
@@ -101,11 +101,11 @@ public class JugadorEntity {
 		this.apodo = apodo;
 	}
 
-	public RankingEntity getRanking() {
+	public Ranking getRanking() {
 		return ranking;
 	}
 
-	public void setRanking(RankingEntity ranking) {
+	public void setRanking(Ranking ranking) {
 		this.ranking = ranking;
 	}
 
@@ -133,12 +133,12 @@ public class JugadorEntity {
 		this.categoria = categoria;
 	}
 
-	public List<GrupoEntity> getGrupos() {
+	public List<Grupo> getGrupos() {
 //		grupos = JugadorDAO.getinstance().obtenerGruposJugador(this);
 		return grupos;
 	}
 
-	public void setGrupos(ArrayList<GrupoEntity> arrayList) {
+	public void setGrupos(ArrayList<Grupo> arrayList) {
 		this.grupos = arrayList;
 	}
 
@@ -154,13 +154,13 @@ public class JugadorEntity {
 		categoria = tipo;
 	}
 
-	public void actualizarRanking(int puntos, PartidoEntity partido) {
+	public void actualizarRanking(int puntos, Partido partido) {
 
 		ranking.actualizar(partido, puntos);
 		
 	}
 
-	public GrupoEntity obtenerGrupo(GrupoDTO grupo) {
+	public Grupo obtenerGrupo(GrupoDTO grupo) {
 		for (int i = 0; i < grupos.size(); i++) {
 
 			if (grupos.get(i).getNombre().equals(grupo.getNombre()))
@@ -183,14 +183,14 @@ public class JugadorEntity {
 		return this.ranking.toDTO();
 	}
 	
-	public void agregarGrupo(GrupoEntity grupo){
+	public void agregarGrupo(Grupo grupo){
 		getGrupos();
 		grupos.add(grupo);
 		JugadorDAO.getinstance().guardarJugador(this);
 	}
 
-	public void actualizarRankingMiembro(PartidoEntity partido, int puntos) {
-		for(GrupoEntity grupo: grupos){
+	public void actualizarRankingMiembro(Partido partido, int puntos) {
+		for(Grupo grupo: grupos){
 			if(grupo.tenesPartido(partido) == true)
 				grupo.actualizarRanking(this, puntos, partido);
 		}
@@ -221,7 +221,7 @@ public class JugadorEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		JugadorEntity other = (JugadorEntity) obj;
+		Jugador other = (Jugador) obj;
 		if (apodo == null) {
 			if (other.apodo != null)
 				return false;

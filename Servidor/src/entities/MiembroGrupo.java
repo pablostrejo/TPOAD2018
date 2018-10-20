@@ -14,7 +14,7 @@ import enums.TipoMiembro;
 
 @Entity
 @Table (name = "Miembros_Grupo")
-public class MiembroGrupoEntity {
+public class MiembroGrupo {
 
 	@Id
 	@Column (name = "id_miembro", nullable = false)
@@ -22,21 +22,21 @@ public class MiembroGrupoEntity {
 	private int id;
 	@ManyToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_jugador")
-	private JugadorEntity jugador;
+	private Jugador jugador;
 	@OneToOne (cascade = CascadeType.ALL) /* fetch = FetchType.EAGER)*/
 	@JoinColumn (name = "id_ranking")
-	private RankingEntity ranking;
+	private Ranking ranking;
 	@Column (columnDefinition = "bit")
 	private boolean activo;
 	@Column (columnDefinition = "int")
 	private TipoMiembro tipoMiembro;
 
-	public MiembroGrupoEntity() {
+	public MiembroGrupo() {
 	}
 
-	public MiembroGrupoEntity(JugadorEntity jugador, TipoMiembro tipo) {
+	public MiembroGrupo(Jugador jugador, TipoMiembro tipo) {
 		this.jugador = jugador;
-		this.ranking = new RankingEntity();
+		this.ranking = new Ranking();
 		this.activo = true;
 		this.tipoMiembro = tipo;
 	}
@@ -81,19 +81,19 @@ public class MiembroGrupoEntity {
 		this.id = id;
 	}
 
-	public JugadorEntity getJugador() {
+	public Jugador getJugador() {
 		return jugador;
 	}
 
-	public void setJugador(JugadorEntity jugador) {
+	public void setJugador(Jugador jugador) {
 		this.jugador = jugador;
 	}
 
-	public RankingEntity getRanking() {
+	public Ranking getRanking() {
 		return ranking;
 	}
 
-	public void setRanking(RankingEntity ranking) {
+	public void setRanking(Ranking ranking) {
 		this.ranking = ranking;
 	}
 
@@ -105,11 +105,11 @@ public class MiembroGrupoEntity {
 		this.activo = activo;
 	}
 
-	public boolean tenesMiembro (JugadorEntity jug){
+	public boolean tenesMiembro (Jugador jug){
 		return jug.getId() == jugador.getId();
 	}
 	
-	public void actualizarRanking (PartidoEntity part, int puntos){
+	public void actualizarRanking (Partido part, int puntos){
 		ranking.actualizar(part, puntos);
 	}
 }

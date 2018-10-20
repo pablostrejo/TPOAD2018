@@ -15,7 +15,7 @@ import enums.Palo;
 
 @Entity
 @Table(name = "Cartas")
-public class CartaEntity {
+public class Carta {
 	@Id
 	@Column(name = "id_carta", nullable = false)
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +31,11 @@ public class CartaEntity {
 	private int posicionValor;
 
 
-	public CartaEntity() {
+	public Carta() {
 		
 	}
 
-	public CartaEntity(Palo palo, int numero, int posicionValor) {
+	public Carta(Palo palo, int numero, int posicionValor) {
 		this.palo = palo;
 		this.numero = numero;
 		this.posicionValor = posicionValor;
@@ -105,7 +105,7 @@ public class CartaEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CartaEntity other = (CartaEntity) obj;
+		Carta other = (Carta) obj;
 		if (id != other.id)
 			return false;
 		if (numero != other.numero)
