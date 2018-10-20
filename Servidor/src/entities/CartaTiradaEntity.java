@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 
@@ -7,19 +7,19 @@ import dtos.CartaTiradaDTO;
 
 @Entity
 @DiscriminatorValue("ct")
-public class CartaTirada extends Movimiento {
+public class CartaTiradaEntity extends MovimientoEntity {
 
 //	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OneToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_cartaJugador")
-	private CartaJugador cartaJugador;
+	private CartaJugadorEntity cartaJugador;
 
-	public CartaTirada(CartaJugador cartaJugador) {
+	public CartaTiradaEntity(CartaJugadorEntity cartaJugador) {
 		super();
 		this.cartaJugador = cartaJugador;
 	}
 
-	public CartaTirada() {
+	public CartaTiradaEntity() {
 	}
 	
 	public CartaTiradaDTO toDTO() {
@@ -34,11 +34,11 @@ public class CartaTirada extends Movimiento {
 		return dto;
 	}
 	
-	public CartaJugador getCartaJugador() {
+	public CartaJugadorEntity getCartaJugador() {
 		return cartaJugador;
 	}
 
-	public void setCartaJugador(CartaJugador cartaJugador) {
+	public void setCartaJugador(CartaJugadorEntity cartaJugador) {
 		this.cartaJugador = cartaJugador;
 	}
 	

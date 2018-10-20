@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import exceptions.PartidoException;
 
 @Entity
 @Table (name = "Partidos")
-public class Partido {
+public class PartidoEntity {
 	@Id 
 	@Column (name = "id_partido", nullable = false)
 	@GeneratedValue
@@ -53,12 +53,12 @@ public class Partido {
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_partido")
-	private List<Pareja> parejas;
+	private List<ParejaEntity> parejas;
 	
 //	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OneToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_pareja")
-	private Pareja parejaGanadora;
+	private ParejaEntity parejaGanadora;
 
 	@Column (name = "fecha_inicio")
 	private Timestamp fechaInicio;
@@ -75,15 +75,15 @@ public class Partido {
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinColumn (name = "id_partido")
-	private List<Chico> chicos;
+	private List<ChicoEntity> chicos;
 
 
-	public Partido() {
+	public PartidoEntity() {
 		
 	}
 
-	public Partido(List<Pareja> parejas, Timestamp fechaInicio, TipoPartido tipoPartido) {
-		this.chicos = new ArrayList<Chico>();
+	public PartidoEntity(List<ParejaEntity> parejas, Timestamp fechaInicio, TipoPartido tipoPartido) {
+		this.chicos = new ArrayList<ChicoEntity>();
 		this.parejas = parejas;
 		this.parejaGanadora = null;
 		this.fechaInicio = fechaInicio;
@@ -92,7 +92,7 @@ public class Partido {
 		this.fechaFin = null;
 		this.fechaInicio = fechaInicio;
 
-		this.chicos.add(new Chico(this,1, 30, this.parejas));
+		this.chicos.add(new ChicoEntity(this,1, 30, this.parejas));
 	}
 	
 	public PartidoDTO toDTO (){
@@ -133,35 +133,35 @@ public class Partido {
 		this.id = id;
 	}
 
-	public void setParejas(List<Pareja> parejas) {
+	public void setParejas(List<ParejaEntity> parejas) {
 		this.parejas = parejas;
 	}
 
-	public void setChicos(List<Chico> chicos) {
+	public void setChicos(List<ChicoEntity> chicos) {
 		this.chicos = chicos;
 	}
 
-	public List<Chico> getChicos() {
+	public List<ChicoEntity> getChicos() {
 		return chicos;
 	}
 
-	public void setChicos(ArrayList<Chico> chicos) {
+	public void setChicos(ArrayList<ChicoEntity> chicos) {
 		this.chicos = chicos;
 	}
 
-	public List<Pareja> getParejas() {
+	public List<ParejaEntity> getParejas() {
 		return parejas;
 	}
 
-	public void setParejas(ArrayList<Pareja> parejas) {
+	public void setParejas(ArrayList<ParejaEntity> parejas) {
 		this.parejas = parejas;
 	}
 
-	public Pareja getParejaGanadora() {
+	public ParejaEntity getParejaGanadora() {
 		return parejaGanadora;
 	}
 
-	public void setParejaGanadora(Pareja parejaGanadora) {
+	public void setParejaGanadora(ParejaEntity parejaGanadora) {
 		this.parejaGanadora = parejaGanadora;
 	}
 
@@ -217,7 +217,7 @@ public class Partido {
 		return false;
 	}
 	
-	public boolean participoJugador(Jugador jugador) {
+	public boolean participoJugador(JugadorEntity jugador) {
 		for(int i=0; i<parejas.size();i++) {
 			if(parejas.get(i).tenesJugador(jugador))
 				return true;
@@ -225,8 +225,8 @@ public class Partido {
 		return false;
 	}
 
-	public Chico obtenerChicoActivo() {
-		Chico aux = null;
+	public ChicoEntity obtenerChicoActivo() {
+		ChicoEntity aux = null;
 
 		for (int i=0; i<chicos.size(); i++) {
 			if (chicos.get(i).isTerminado() == false)
@@ -236,7 +236,7 @@ public class Partido {
 	}
 
 	public void actualizarRankingJugadores() throws JugadorException {
-		Pareja perdedora= null;
+		ParejaEntity perdedora= null;
 		if(parejas.get(0).esPareja(parejaGanadora))
 			perdedora = parejas.get(1);
 		else
@@ -275,7 +275,7 @@ public class Partido {
 		
 		//Actualizo las categoría de cada jugador para comprobar si bajo de categoría
 		
-		for(Pareja pareja: parejas){
+		for(ParejaEntity pareja: parejas){
 			pareja.getJugador1().comprobarCambioCategoria();
 			pareja.getJugador2().comprobarCambioCategoria();
 		}
@@ -294,8 +294,8 @@ public class Partido {
 		int  chicosGanadosPareja2 =0;
 		
 		if(estadoPartido != EstadoPartido.Terminado){
-			Pareja ganadoraChico;
-			for(Chico chico: chicos){
+			ParejaEntity ganadoraChico;
+			for(ChicoEntity chico: chicos){
 				ganadoraChico = chico.obtenerParejaGanadora();
 				if(parejas.get(0).esPareja(ganadoraChico))
 						chicosGanadosPareja1++;
@@ -320,14 +320,14 @@ public class Partido {
 			} else
 			{
 				//No se termino el partido, aun faltan chicos por jugar
-				chicos.add(new Chico(this, chicos.size()+1, 30, this.parejas));								
+				chicos.add(new ChicoEntity(this, chicos.size()+1, 30, this.parejas));								
 			}
 	}
 	
 
 	public JugadorDTO turnoCartaJugador (){
 		if(estadoPartido != EstadoPartido.Terminado) {
-			Chico chico = obtenerChicoActivo();
+			ChicoEntity chico = obtenerChicoActivo();
 
 			if(chico.tocaCarta() == true){
 				return chico.obtenerTurnoJugador().toDTO();
@@ -337,10 +337,10 @@ public class Partido {
 		return null;
 	}
 
-	public void nuevoMovimiento(Jugador jugador, Movimiento movimiento) throws PartidoException, BazaException, JugadorException {
+	public void nuevoMovimiento(JugadorEntity jugador, MovimientoEntity movimiento) throws PartidoException, BazaException, JugadorException {
 		if (!this.estasTerminado()) {
 			// deberia haber un Chico activo! 
-			Chico chico = obtenerChicoActivo();
+			ChicoEntity chico = obtenerChicoActivo();
 
 			if (!chico.obtenerUltimaMano().getJugadorActual().equals(jugador))
 				throw new PartidoException("Error grave: Nunca puede llamar a 'nuevoMovimiento' si no es su turno");
@@ -358,7 +358,7 @@ public class Partido {
 
 	public void levantar() {
 		
-		for(Chico chico: chicos){
+		for(ChicoEntity chico: chicos){
 			chico.levantar(this);
 		}
 		
@@ -382,7 +382,7 @@ public class Partido {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Partido other = (Partido) obj;
+		PartidoEntity other = (PartidoEntity) obj;
 		if (estadoPartido != other.estadoPartido)
 			return false;
 		if (id != other.id)
@@ -392,7 +392,7 @@ public class Partido {
 		return true;
 	}
 
-	public List<Movimiento> obtenerProximoMovimiento (MovimientoDTO ultimoMovimiento) throws ChicoException, ManoException {
+	public List<MovimientoEntity> obtenerProximoMovimiento (MovimientoDTO ultimoMovimiento) throws ChicoException, ManoException {
 	
 		//le sumo 1 al movimiento ya que el proximo a analizar será el que necesita
 		
@@ -400,7 +400,7 @@ public class Partido {
 		
 		if(ultimoMovimiento == null)
 		{//Es el primer Movimiento el que tengo que devolver
-			List<Movimiento> movimientos = new ArrayList<Movimiento>();
+			List<MovimientoEntity> movimientos = new ArrayList<MovimientoEntity>();
 			
 			movimientos.add(chicos.get(0).getManos().get(0).getBazas().get(0).getTurnosBaza().get(0));
 			return movimientos;
@@ -409,7 +409,7 @@ public class Partido {
 		{
 			//Me dio un movimiento, tengo que conseguir el proximo y devolver los anteriores
 			ultimoMovimiento.setId(ultimoMovimiento.getId()+1);
-			for(Chico chico: chicos)
+			for(ChicoEntity chico: chicos)
 			{
 				if(chico.tenesMovimiento(ultimoMovimiento))
 					return chico.getProximoMovimiento(ultimoMovimiento);
@@ -418,14 +418,14 @@ public class Partido {
 		
 		//no hay proximo movimiento, devuelvo una lista vacia para avisar que el partido termino 
 		
-		return new ArrayList<Movimiento>();
+		return new ArrayList<MovimientoEntity>();
 		
 	}
 
-	public List<CartaJugador> getCartasJugadores(MovimientoDTO movimiento) throws ChicoException, PartidoException {
+	public List<CartaJugadorEntity> getCartasJugadores(MovimientoDTO movimiento) throws ChicoException, PartidoException {
 		
 		
-		for(Chico chico: chicos){
+		for(ChicoEntity chico: chicos){
 			
 			if(chico.tenesMovimiento(movimiento))
 			{

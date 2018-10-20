@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 
@@ -15,7 +15,7 @@ import enums.Palo;
 
 @Entity
 @Table(name = "Cartas")
-public class Carta {
+public class CartaEntity {
 	@Id
 	@Column(name = "id_carta", nullable = false)
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +31,11 @@ public class Carta {
 	private int posicionValor;
 
 
-	public Carta() {
+	public CartaEntity() {
 		
 	}
 
-	public Carta(Palo palo, int numero, int posicionValor) {
+	public CartaEntity(Palo palo, int numero, int posicionValor) {
 		this.palo = palo;
 		this.numero = numero;
 		this.posicionValor = posicionValor;
@@ -105,7 +105,7 @@ public class Carta {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Carta other = (Carta) obj;
+		CartaEntity other = (CartaEntity) obj;
 		if (id != other.id)
 			return false;
 		if (numero != other.numero)

@@ -10,10 +10,10 @@ import org.hibernate.Transaction;
 
 import dtos.JugadorDTO;
 import dtos.PartidoDTO;
+import entities.PartidoEntity;
 import enums.EstadoPartido;
 import enums.TipoPartido;
 import exceptions.PartidoException;
-import bean.Partido;
 import hibernate.HibernateUtil;
 
 public class PartidoDAO {
@@ -29,7 +29,7 @@ public class PartidoDAO {
 		return instancia;
 	}
 
-	public Integer guardarPartido(Partido partido) {
+	public Integer guardarPartido(PartidoEntity partido) {
 		Transaction t = null;
 		Session s = sf.openSession();
 		
@@ -50,12 +50,12 @@ public class PartidoDAO {
 		return null;
 	}
 
-	public Partido buscarPartido(PartidoDTO partido) throws PartidoException {
+	public PartidoEntity buscarPartido(PartidoDTO partido) throws PartidoException {
 		Session s = sf.openSession();
-		Partido devolver;
+		PartidoEntity devolver;
 		try{
 			
-			devolver = (Partido) s.createQuery(
+			devolver = (PartidoEntity) s.createQuery(
 						"select p from Partido p " + 
 						"inner join p.chicos chicos " +
 						"inner join p.parejas parejas " +
@@ -72,11 +72,11 @@ public class PartidoDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Partido> obtenerPartidosEntreFechas(Timestamp fechaDesde, Timestamp fechaHasta, 
+	public List<PartidoEntity> obtenerPartidosEntreFechas(Timestamp fechaDesde, Timestamp fechaHasta, 
 			TipoPartido modalidad, JugadorDTO jugador) throws PartidoException {
 
 		Session s = sf.openSession();
-		List<Partido> partidos = new ArrayList<Partido>();
+		List<PartidoEntity> partidos = new ArrayList<PartidoEntity>();
 		try {
 			partidos = s.createQuery(
 					"select p from Partido p " +
@@ -109,9 +109,9 @@ public class PartidoDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Partido> obtenerPartidosPendientes() throws PartidoException {
+	public List<PartidoEntity> obtenerPartidosPendientes() throws PartidoException {
 		Session s = sf.openSession();
-		List<Partido> devolver = null;
+		List<PartidoEntity> devolver = null;
 		try{
 			//No es necesario los inners por la estrategia de EAGER!!!!
 			devolver = s.createQuery(
@@ -133,7 +133,7 @@ public class PartidoDAO {
 		}
 	}
 	
-	public void update(Partido partido) throws PartidoException {
+	public void update(PartidoEntity partido) throws PartidoException {
 		Transaction t = null;
 		Session s = sf.openSession();
 		try {
@@ -154,9 +154,9 @@ public class PartidoDAO {
 
 	
 	@SuppressWarnings("unchecked")
-	public List<Partido> levantarPartidosTerminadosJugador(JugadorDTO jugador) throws PartidoException {
+	public List<PartidoEntity> levantarPartidosTerminadosJugador(JugadorDTO jugador) throws PartidoException {
 	Session s = sf.openSession();
-	List<Partido> devolver = null; 
+	List<PartidoEntity> devolver = null; 
 	try{
 		//No es necesario los inners por la estrategia de EAGER!!!!
 		devolver = s.createQuery(

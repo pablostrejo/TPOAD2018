@@ -5,8 +5,8 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import bean.Partido;
-import bean.Ranking;
+import entities.PartidoEntity;
+import entities.RankingEntity;
 import hibernate.HibernateUtil;
 
 public class RankingDAO {
@@ -25,9 +25,9 @@ public class RankingDAO {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Partido> obtenerPartidosRanking (Ranking ranking){
+	public List<PartidoEntity> obtenerPartidosRanking (RankingEntity ranking){
 		Session s = sf.openSession();
-		List<Partido> devolver;
+		List<PartidoEntity> devolver;
 		try{
 			devolver = s.createQuery("select part from Ranking rank inner join rank.partidos part "
 					+ "where rank.id = :id").setParameter("id", ranking.getId()).list();

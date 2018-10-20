@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import enums.TipoPartido;
 
 @Entity
 @Table (name = "Grupos")
-public class Grupo {
+public class GrupoEntity {
 	
 	@Id
 	@Column (name = "id_grupo")
@@ -34,17 +34,17 @@ public class Grupo {
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_grupo")
-	private List<MiembroGrupo> miembros;
+	private List<MiembroGrupoEntity> miembros;
 	
 	
 	/* Las Parejas Activas no se persisten */
 	@Transient
-	private List<Pareja> parejasActivas;
+	private List<ParejaEntity> parejasActivas;
 
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinColumn (name = "id_grupo")
-	private List<Partido> partidos;
+	private List<PartidoEntity> partidos;
 	
 	
 	public GrupoDTO toDto(){
@@ -75,16 +75,16 @@ public class Grupo {
 		return dto;
 	}
 	
-	public Grupo() {
-		parejasActivas = new ArrayList<Pareja>();
+	public GrupoEntity() {
+		parejasActivas = new ArrayList<ParejaEntity>();
 	}
 
-	public Grupo(String nombre, Jugador administrador) {
+	public GrupoEntity(String nombre, JugadorEntity administrador) {
 		this.nombre = nombre;
-		this.miembros = new ArrayList<MiembroGrupo>();
-		this.parejasActivas = new ArrayList<Pareja>();
-		this.partidos = new ArrayList<Partido>();
-		miembros.add(new MiembroGrupo(administrador, TipoMiembro.Administrador));
+		this.miembros = new ArrayList<MiembroGrupoEntity>();
+		this.parejasActivas = new ArrayList<ParejaEntity>();
+		this.partidos = new ArrayList<PartidoEntity>();
+		miembros.add(new MiembroGrupoEntity(administrador, TipoMiembro.Administrador));
 	}
 
 	public int getId() {
@@ -103,40 +103,40 @@ public class Grupo {
 		this.nombre = nombre;
 	}
 
-	public List<MiembroGrupo> getMiembros() {
+	public List<MiembroGrupoEntity> getMiembros() {
 		return miembros;
 	}
 
-	public void setMiembros(ArrayList<MiembroGrupo> miembros) {
+	public void setMiembros(ArrayList<MiembroGrupoEntity> miembros) {
 		this.miembros = miembros;
 	}
 
-	public List<Pareja> getParejasActivas() {
+	public List<ParejaEntity> getParejasActivas() {
 		return parejasActivas;
 	}
 
-	public void setParejasActivas(ArrayList<Pareja> parejasActivas) {
+	public void setParejasActivas(ArrayList<ParejaEntity> parejasActivas) {
 		this.parejasActivas = parejasActivas;
 	}
 
-	public List<Partido> getPartidos() {
+	public List<PartidoEntity> getPartidos() {
 //		partidos = GrupoDAO.getInstancia().buscarPartidos(this);
 		return partidos;
 	}
 
-	public void setPartidos(ArrayList<Partido> partidos) {
+	public void setPartidos(ArrayList<PartidoEntity> partidos) {
 		this.partidos = partidos;
 	}
 
-	public void armarPareja(ArrayList<Jugador> integrantes) {
+	public void armarPareja(ArrayList<JugadorEntity> integrantes) {
 
-		Pareja pareja = new Pareja(0,integrantes.get(0), integrantes.get(1));
+		ParejaEntity pareja = new ParejaEntity(0,integrantes.get(0), integrantes.get(1));
 		parejasActivas.add(pareja);
 	}
 	
-	public void crearPartida(ArrayList<Pareja> parejas, Timestamp fechaInicio) {
+	public void crearPartida(ArrayList<ParejaEntity> parejas, Timestamp fechaInicio) {
 	
-		Partido partido = new Partido(parejas, fechaInicio , TipoPartido.Grupo);
+		PartidoEntity partido = new PartidoEntity(parejas, fechaInicio , TipoPartido.Grupo);
 		partidos.add(partido);	
 	}
 	
@@ -145,7 +145,7 @@ public class Grupo {
 	
 	}
 	
-	public void eliminarMiembroGrupo(Jugador jugador) {
+	public void eliminarMiembroGrupo(JugadorEntity jugador) {
 	
 		for(int i=0; i<miembros.size(); i++){
 			if(miembros.get(i).getJugador().getApodo().equals(jugador.getApodo()))
@@ -164,7 +164,7 @@ public class Grupo {
 		return rankings;
 	}
 	
-	public boolean esAdministrador(Jugador jugador) {
+	public boolean esAdministrador(JugadorEntity jugador) {
 		
 		for(int i=0; i<miembros.size(); i++)
 		{
@@ -187,14 +187,14 @@ public class Grupo {
 		return false;
 	}
 	
-	public void agregarMiembro(Jugador jugador) {
+	public void agregarMiembro(JugadorEntity jugador) {
 	
-		MiembroGrupo miembro = new MiembroGrupo(jugador, TipoMiembro.Estandar);
+		MiembroGrupoEntity miembro = new MiembroGrupoEntity(jugador, TipoMiembro.Estandar);
 		miembros.add(miembro);
 		GrupoDAO.getInstancia().guardarGrupo(this);
 	}
 	
-	public MiembroGrupo obtenerAdministrador (){
+	public MiembroGrupoEntity obtenerAdministrador (){
 		
 		for(int i=0; i<miembros.size(); i++)
 		{
@@ -216,7 +216,7 @@ public class Grupo {
 	}
 	
 	
-	public Pareja obtenerPareja (ParejaDTO dto){
+	public ParejaEntity obtenerPareja (ParejaDTO dto){
 		
 		
 		for(int i=0; i<parejasActivas.size(); i++){
@@ -238,7 +238,7 @@ public class Grupo {
 		return true;
 	}
 	
-	public void agregarPartido (Partido partido){
+	public void agregarPartido (PartidoEntity partido){
 		
 		partidos.add(partido);
 		
@@ -250,7 +250,7 @@ public class Grupo {
 		
 	}
 	
-	public void eliminarPareja (Pareja pareja){
+	public void eliminarPareja (ParejaEntity pareja){
 		
 		
 		parejasActivas.remove(pareja);
@@ -258,9 +258,9 @@ public class Grupo {
 	}
 
 
-	public boolean tenesPartido (Partido partido){
+	public boolean tenesPartido (PartidoEntity partido){
 		
-		for(Partido part: partidos){
+		for(PartidoEntity part: partidos){
 			
 			if(part.getId() == partido.getId())
 				return true;			
@@ -271,10 +271,10 @@ public class Grupo {
 	}
 	
 	
-	public void actualizarRanking (Jugador jugador, int puntos, Partido partido){
+	public void actualizarRanking (JugadorEntity jugador, int puntos, PartidoEntity partido){
 		
 		
-		for(MiembroGrupo miembro: miembros){
+		for(MiembroGrupoEntity miembro: miembros){
 			
 			if(miembro.tenesMiembro(jugador) == true)
 				

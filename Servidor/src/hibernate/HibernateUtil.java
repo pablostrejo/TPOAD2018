@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 
-import bean.*;
+import entities.*;
 
 
 public class HibernateUtil {
@@ -16,21 +16,21 @@ public class HibernateUtil {
 		try {
 			AnnotationConfiguration config = new AnnotationConfiguration();
 
-			config.addAnnotatedClass(Ranking.class);
-			config.addAnnotatedClass(Baza.class);
-			config.addAnnotatedClass(Carta.class);
-			config.addAnnotatedClass(CartaJugador.class);
-			config.addAnnotatedClass(CartaTirada.class);
-			config.addAnnotatedClass(Chico.class);
-			config.addAnnotatedClass(Grupo.class);
-			config.addAnnotatedClass(Jugador.class);
-			config.addAnnotatedClass(Mano.class);
-			config.addAnnotatedClass(MiembroGrupo.class);
-			config.addAnnotatedClass(Movimiento.class);
-			config.addAnnotatedClass(Pareja.class);
-			config.addAnnotatedClass(Partido.class);
-			config.addAnnotatedClass(PuntajePareja.class);
-			config.addAnnotatedClass(Envite.class);
+			config.addAnnotatedClass(RankingEntity.class);
+			config.addAnnotatedClass(BazaEntity.class);
+			config.addAnnotatedClass(CartaEntity.class);
+			config.addAnnotatedClass(CartaJugadorEntity.class);
+			config.addAnnotatedClass(CartaTiradaEntity.class);
+			config.addAnnotatedClass(ChicoEntity.class);
+			config.addAnnotatedClass(GrupoEntity.class);
+			config.addAnnotatedClass(JugadorEntity.class);
+			config.addAnnotatedClass(ManoEntity.class);
+			config.addAnnotatedClass(MiembroGrupoEntity.class);
+			config.addAnnotatedClass(MovimientoEntity.class);
+			config.addAnnotatedClass(ParejaEntity.class);
+			config.addAnnotatedClass(PartidoEntity.class);
+			config.addAnnotatedClass(PuntajeParejaEntity.class);
+			config.addAnnotatedClass(EnviteEntity.class);
 
 			sessionFactory = config.buildSessionFactory(); 
 			

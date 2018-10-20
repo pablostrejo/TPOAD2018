@@ -7,8 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import dtos.ParejaDTO;
-
-import bean.Pareja;
+import entities.ParejaEntity;
 
 
 public class ParejaDAO {
@@ -32,7 +31,7 @@ public class ParejaDAO {
 		return s;
 	}
 	
-	public Integer guardarPareja(Pareja pareja) {
+	public Integer guardarPareja(ParejaEntity pareja) {
 		Transaction t = null;
 		Session s = sf.openSession();
 		
@@ -53,11 +52,11 @@ public class ParejaDAO {
 		return null;
 	}
 	
-	public Pareja buscarPareja (ParejaDTO pareja){
+	public ParejaEntity buscarPareja (ParejaDTO pareja){
 		Session s = this.getSession();
-		Pareja devolver;
+		ParejaEntity devolver;
 		try {
-			devolver = (Pareja) s.createQuery("select p from Pareja p inner join p.jugador1 p1 inner join p.jugador2 p2 where p.id=:id")
+			devolver = (ParejaEntity) s.createQuery("select p from Pareja p inner join p.jugador1 p1 inner join p.jugador2 p2 where p.id=:id")
 					.setParameter("id",pareja.getId()).uniqueResult();
 
 			s.close();

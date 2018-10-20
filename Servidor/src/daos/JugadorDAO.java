@@ -8,9 +8,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import bean.Grupo;
-import bean.Jugador;
 import dtos.JugadorDTO;
+import entities.GrupoEntity;
+import entities.JugadorEntity;
 
 public class JugadorDAO {
 
@@ -38,7 +38,7 @@ public class JugadorDAO {
 			s.close();
 	}
 
-	public void guardarJugador(Jugador jugador) {
+	public void guardarJugador(JugadorEntity jugador) {
 		Transaction t = null;
 		s = this.getSession();
 
@@ -53,10 +53,10 @@ public class JugadorDAO {
 		}
 	}
 
-	public Jugador buscarJugador(JugadorDTO jugador) {
+	public JugadorEntity buscarJugador(JugadorDTO jugador) {
 		Session s = this.getSession();
 		try {
-			Jugador devolver = (Jugador) s.createQuery(
+			JugadorEntity devolver = (JugadorEntity) s.createQuery(
 					"select j from Jugador j inner join j.ranking  left join j.grupos where j.id =:id")
 					.setParameter("id", jugador.getId()).uniqueResult();
 
@@ -69,10 +69,10 @@ public class JugadorDAO {
 		}
 	}
 
-	public Jugador buscarJugadorPorApodoMail(JugadorDTO jugador) {
+	public JugadorEntity buscarJugadorPorApodoMail(JugadorDTO jugador) {
 		Session s = this.getSession();
 		try {
-			Jugador jug = (Jugador) s.createQuery(
+			JugadorEntity jug = (JugadorEntity) s.createQuery(
 					"select j " +
 					"from Jugador j inner join j.ranking " +
 					"where j.apodo = :apodo or j.mail = :mail")
@@ -88,10 +88,10 @@ public class JugadorDAO {
 		}
 	}
 
-	public Jugador buscarJugadorPorApodoPassword(JugadorDTO jugador) {
+	public JugadorEntity buscarJugadorPorApodoPassword(JugadorDTO jugador) {
 		Session s = this.getSession();
 		try {
-			Jugador jug = (Jugador) s.createQuery(
+			JugadorEntity jug = (JugadorEntity) s.createQuery(
 					"select j " +
 					"from Jugador j inner join j.ranking left join j.grupos " +
 					"where j.apodo = :apodo and j.password = :password")
@@ -120,11 +120,11 @@ public class JugadorDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ArrayList<Grupo> obtenerGruposJugador(Jugador jugador) {
+	public ArrayList<GrupoEntity> obtenerGruposJugador(JugadorEntity jugador) {
 		Session s = this.getSession();
-		ArrayList<Grupo> devolver = null;
+		ArrayList<GrupoEntity> devolver = null;
 		try {
-			devolver = (ArrayList<Grupo>) s.createQuery(
+			devolver = (ArrayList<GrupoEntity>) s.createQuery(
 							"select g from Jugador j inner join j.grupos g where j.id =:id")
 							.setParameter("id", jugador.getId()).list();
 			s.close();
@@ -137,11 +137,11 @@ public class JugadorDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ArrayList<Jugador> obtenerJugadores() {
+	public ArrayList<JugadorEntity> obtenerJugadores() {
 		Session s = this.getSession();
-		ArrayList<Jugador> jugadores;
+		ArrayList<JugadorEntity> jugadores;
 		try {
-			jugadores = (ArrayList<Jugador>) s.createQuery(
+			jugadores = (ArrayList<JugadorEntity>) s.createQuery(
 					"Select j from Jugador j left join j.grupos").list();
 			s.close();
 			return jugadores;
@@ -152,10 +152,10 @@ public class JugadorDAO {
 		}
 	}
 
-	public Jugador buscarJugadorPorApodo(JugadorDTO jugador) {
+	public JugadorEntity buscarJugadorPorApodo(JugadorDTO jugador) {
 		Session s = this.getSession();
 		try {
-			Jugador devolver = (Jugador) s.createQuery(
+			JugadorEntity devolver = (JugadorEntity) s.createQuery(
 					"select j from Jugador j inner join j.ranking  left join j.grupos where j.apodo =:apodo")
 					.setParameter("apodo", jugador.getApodo()).uniqueResult();
 

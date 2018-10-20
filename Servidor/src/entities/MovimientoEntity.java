@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import java.sql.Timestamp;
 
@@ -12,7 +12,7 @@ import dtos.MovimientoDTO;
 @Table(name ="Movimientos")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="tipo",discriminatorType=DiscriminatorType.STRING)
-public class Movimiento {
+public class MovimientoEntity {
 
 	@Id
 	@Column (name = "id_movimiento", nullable = false)

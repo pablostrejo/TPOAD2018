@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 
@@ -14,7 +14,7 @@ import enums.TipoMiembro;
 
 @Entity
 @Table (name = "Miembros_Grupo")
-public class MiembroGrupo {
+public class MiembroGrupoEntity {
 
 	@Id
 	@Column (name = "id_miembro", nullable = false)
@@ -22,21 +22,21 @@ public class MiembroGrupo {
 	private int id;
 	@ManyToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_jugador")
-	private Jugador jugador;
+	private JugadorEntity jugador;
 	@OneToOne (cascade = CascadeType.ALL) /* fetch = FetchType.EAGER)*/
 	@JoinColumn (name = "id_ranking")
-	private Ranking ranking;
+	private RankingEntity ranking;
 	@Column (columnDefinition = "bit")
 	private boolean activo;
 	@Column (columnDefinition = "int")
 	private TipoMiembro tipoMiembro;
 
-	public MiembroGrupo() {
+	public MiembroGrupoEntity() {
 	}
 
-	public MiembroGrupo(Jugador jugador, TipoMiembro tipo) {
+	public MiembroGrupoEntity(JugadorEntity jugador, TipoMiembro tipo) {
 		this.jugador = jugador;
-		this.ranking = new Ranking();
+		this.ranking = new RankingEntity();
 		this.activo = true;
 		this.tipoMiembro = tipo;
 	}
@@ -81,19 +81,19 @@ public class MiembroGrupo {
 		this.id = id;
 	}
 
-	public Jugador getJugador() {
+	public JugadorEntity getJugador() {
 		return jugador;
 	}
 
-	public void setJugador(Jugador jugador) {
+	public void setJugador(JugadorEntity jugador) {
 		this.jugador = jugador;
 	}
 
-	public Ranking getRanking() {
+	public RankingEntity getRanking() {
 		return ranking;
 	}
 
-	public void setRanking(Ranking ranking) {
+	public void setRanking(RankingEntity ranking) {
 		this.ranking = ranking;
 	}
 
@@ -105,11 +105,11 @@ public class MiembroGrupo {
 		this.activo = activo;
 	}
 
-	public boolean tenesMiembro (Jugador jug){
+	public boolean tenesMiembro (JugadorEntity jug){
 		return jug.getId() == jugador.getId();
 	}
 	
-	public void actualizarRanking (Partido part, int puntos){
+	public void actualizarRanking (PartidoEntity part, int puntos){
 		ranking.actualizar(part, puntos);
 	}
 }

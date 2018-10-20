@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 
@@ -6,7 +6,7 @@ import dtos.CartaJugadorDTO;
 
 @Entity
 @Table(name = "CartasJugador")
-public class CartaJugador {
+public class CartaJugadorEntity {
 
 	@Id
 	@Column(name = "id_cartaJugador", nullable = false)
@@ -16,22 +16,22 @@ public class CartaJugador {
 //	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_jugador")
-	private Jugador jugador;
+	private JugadorEntity jugador;
 
 	@ManyToOne /* fetch = FetchType.EAGER) */
 	@JoinColumn(name = "id_carta")
-	private Carta carta;
+	private CartaEntity carta;
 
 	@Column(columnDefinition = "bit")
 	private boolean tirada;
 
-	public CartaJugador(Jugador jugador, Carta carta, boolean tirada) {
+	public CartaJugadorEntity(JugadorEntity jugador, CartaEntity carta, boolean tirada) {
 		this.jugador = jugador;
 		this.carta = carta;
 		this.tirada = tirada;
 	}
 
-	public CartaJugador() {
+	public CartaJugadorEntity() {
 
 	}
 
@@ -54,19 +54,19 @@ public class CartaJugador {
 		this.id = id;
 	}
 
-	public Jugador getJugador() {
+	public JugadorEntity getJugador() {
 		return jugador;
 	}
 
-	public void setJugador(Jugador jugador) {
+	public void setJugador(JugadorEntity jugador) {
 		this.jugador = jugador;
 	}
 
-	public Carta getCarta() {
+	public CartaEntity getCarta() {
 		return carta;
 	}
 
-	public void setCarta(Carta carta) {
+	public void setCarta(CartaEntity carta) {
 		this.carta = carta;
 	}
 
@@ -98,7 +98,7 @@ public class CartaJugador {
 		if (getClass() != obj.getClass())
 			return false;
 
-		CartaJugador other = (CartaJugador) obj;
+		CartaJugadorEntity other = (CartaJugadorEntity) obj;
 		if (carta == null) {
 			if (other.carta != null)
 				return false;

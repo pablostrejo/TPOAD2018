@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 
@@ -8,7 +8,7 @@ import enums.TipoEnvite;
 
 @Entity
 @DiscriminatorValue("env")
-public class Envite extends Movimiento {
+public class EnviteEntity extends MovimientoEntity {
 
 	@Column (name = "tipo_envite", columnDefinition = "tinyint")
 	private TipoEnvite tipoEnvite;
@@ -16,9 +16,9 @@ public class Envite extends Movimiento {
 //	@ManyToOne(cascade = CascadeType.ALL)
 	@ManyToOne
 	@JoinColumn(name = "id_jugador")
-	private Jugador jugador;
+	private JugadorEntity jugador;
 
-	public Envite() {
+	public EnviteEntity() {
 	}
 
 	public TipoEnvite getTipoEnvite() {
@@ -29,15 +29,15 @@ public class Envite extends Movimiento {
 		this.tipoEnvite = tipoEnvite;
 	}
 
-	public Envite(TipoEnvite tipoEnvite) {
+	public EnviteEntity(TipoEnvite tipoEnvite) {
 		this.tipoEnvite = tipoEnvite;
 	}
 
-	public Jugador getJugador() {
+	public JugadorEntity getJugador() {
 		return jugador;
 	}
 
-	public void setJugador(Jugador jugador) {
+	public void setJugador(JugadorEntity jugador) {
 		this.jugador = jugador;
 	}
 

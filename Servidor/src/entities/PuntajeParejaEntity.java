@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 
@@ -6,7 +6,7 @@ import dtos.PuntajeParejaDTO;
 
 @Entity
 @Table(name = "PuntajesPareja")
-public class PuntajePareja {
+public class PuntajeParejaEntity {
 	@Id
 	@Column(name = "id_puntaje", nullable = false)
 	@GeneratedValue
@@ -14,15 +14,15 @@ public class PuntajePareja {
 //	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_pareja")
-	private Pareja pareja;
+	private ParejaEntity pareja;
 	@Column
 	private int puntaje;
 
 
-	public PuntajePareja() {
+	public PuntajeParejaEntity() {
 	}
 
-	public PuntajePareja(Pareja pareja, int puntaje) {
+	public PuntajeParejaEntity(ParejaEntity pareja, int puntaje) {
 		this.pareja = pareja;
 		this.puntaje = puntaje;
 	}
@@ -43,11 +43,11 @@ public class PuntajePareja {
 		this.id = id;
 	}
 
-	public Pareja getPareja() {
+	public ParejaEntity getPareja() {
 		return pareja;
 	}
 
-	public void setPareja(Pareja pareja) {
+	public void setPareja(ParejaEntity pareja) {
 		this.pareja = pareja;
 	}
 

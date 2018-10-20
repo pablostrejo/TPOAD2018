@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import enums.TipoCategoria;
 
 @Entity
 @Table (name = "Rankings")
-public class Ranking {
+public class RankingEntity {
 	@Id
 	@Column (name = "id_ranking")
 	@GeneratedValue
@@ -22,15 +22,15 @@ public class Ranking {
 	@JoinTable (name = "Ranking_Partido",
 				joinColumns = {@JoinColumn (name = "id_ranking")},
 				inverseJoinColumns = {@JoinColumn (name = "id_partido")})
-	private List<Partido> partidos;
+	private List<PartidoEntity> partidos;
 
 	@Column
 	private int puntos;
 	@Column (name = "cant_ganadas")
 	private int cantidadGanadas;
 	
-	public Ranking() {
-		this.partidos = new ArrayList<Partido>();
+	public RankingEntity() {
+		this.partidos = new ArrayList<PartidoEntity>();
 		this.puntos = 0;
 		this.cantidadGanadas = 0;
 	}
@@ -60,12 +60,12 @@ public class Ranking {
 		this.id = id;
 	}
 
-	public List<Partido> getPartidos() {
+	public List<PartidoEntity> getPartidos() {
 		partidos = RankingDAO.getInstance().obtenerPartidosRanking(this);
 		return partidos;
 	}
 
-	public void setPartidos(ArrayList<Partido> partidos) {
+	public void setPartidos(ArrayList<PartidoEntity> partidos) {
 		this.partidos = partidos;
 	}
 
@@ -90,7 +90,7 @@ public class Ranking {
 		return puntos/partidos.size();
 	}
 	
-	public void actualizar(Partido part, int punt){
+	public void actualizar(PartidoEntity part, int punt){
 		
 		partidos.add(part);
 		

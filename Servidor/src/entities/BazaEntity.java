@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import exceptions.*;
 
 @Entity
 @Table (name = "Bazas")
-public class Baza {
+public class BazaEntity {
 
 	@Id
 	@Column (name = "id_baza", nullable = false)
@@ -25,36 +25,36 @@ public class Baza {
 	
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn (name = "id_baza")
-	private List<Movimiento> turnosBaza;
+	private List<MovimientoEntity> turnosBaza;
 	
 	@Column (name = "nro_baza")
 	private int numeroBaza;
 	
 	@Transient
-	private Mano mano; //se utiliza para reemplazar los observers	
+	private ManoEntity mano; //se utiliza para reemplazar los observers	
 
 //	@OneToOne (cascade = CascadeType.ALL) /* fetch = FetchType.EAGER)*/
 	@OneToOne /* fetch = FetchType.EAGER)*/
 	@JoinColumn (name = "id_jugador")
-	private Jugador ganador;
+	private JugadorEntity ganador;
 	
 	@Transient
 	/* No se persiste el orden de juego */
-	private List<Jugador> ordenJuego;
+	private List<JugadorEntity> ordenJuego;
 
 	@Transient
 	private int cantidadCartasTiradas;
 
 
-	public Baza(Mano mano, int numeroBaza, List<Jugador> ordenJuego) {
+	public BazaEntity(ManoEntity mano, int numeroBaza, List<JugadorEntity> ordenJuego) {
 		this.mano = mano;
 		this.numeroBaza = numeroBaza;
 		this.ordenJuego = ordenJuego;
-		this.turnosBaza = new ArrayList<Movimiento>();
+		this.turnosBaza = new ArrayList<MovimientoEntity>();
 		this.cantidadCartasTiradas = 0;
 	}
 
-	public Baza() {
+	public BazaEntity() {
 		
 	}
 
@@ -94,11 +94,11 @@ public class Baza {
 		this.id = id;
 	}
 
-	public List<Movimiento> getTurnosBaza() {
+	public List<MovimientoEntity> getTurnosBaza() {
 		return turnosBaza;
 	}
 
-	public void setTurnosBaza(ArrayList<Movimiento> turnosBaza) {
+	public void setTurnosBaza(ArrayList<MovimientoEntity> turnosBaza) {
 		this.turnosBaza = turnosBaza;
 	}
 
@@ -110,31 +110,31 @@ public class Baza {
 		this.numeroBaza = numeroBaza;
 	}
 
-	public void setGanador(Jugador ganador) {
+	public void setGanador(JugadorEntity ganador) {
 		this.ganador = ganador;
 	}
 
-	public List<Jugador> getOrdenJuego() {
+	public List<JugadorEntity> getOrdenJuego() {
 		return ordenJuego;
 	}
 
-	public void setOrdenJuego(List<Jugador> ordenJuego) {
+	public void setOrdenJuego(List<JugadorEntity> ordenJuego) {
 		this.ordenJuego = ordenJuego;
 	}
 	
-	public Movimiento obtenerUltimoMovimiento (){
+	public MovimientoEntity obtenerUltimoMovimiento (){
 		return turnosBaza.get(turnosBaza.size() - 1);
 	}
 
-	public Jugador obtenerTurnoBaza() {
+	public JugadorEntity obtenerTurnoBaza() {
 		return ordenJuego.get(cantidadCartasTiradas); 
 	}
 
 	// devuelve el jugador que debe contestar el envite
-	public Jugador obtenerTurnoContestar() {
-		Movimiento aux = obtenerUltimoMovimiento(); // se sabe que es un envite
+	public JugadorEntity obtenerTurnoContestar() {
+		MovimientoEntity aux = obtenerUltimoMovimiento(); // se sabe que es un envite
 
-		if (((Envite) aux).getJugador().getId() == ordenJuego.get(2).getId()) {
+		if (((EnviteEntity) aux).getJugador().getId() == ordenJuego.get(2).getId()) {
 			// el ultimo movimiento lo hizo el pie de la primer pareja,
 			// por lo tanto debe contestar el pie de la segunda pareja.
 			return ordenJuego.get(3);
@@ -159,17 +159,17 @@ public class Baza {
 */
 
 	public void definirGanador() throws BazaException {
-		CartaJugador cartaJugador1 = null;
-		CartaJugador cartaJugador2 = null;
-		CartaJugador cartaJugador3 = null;
-		CartaJugador cartaJugador4 = null;
+		CartaJugadorEntity cartaJugador1 = null;
+		CartaJugadorEntity cartaJugador2 = null;
+		CartaJugadorEntity cartaJugador3 = null;
+		CartaJugadorEntity cartaJugador4 = null;
 
-		CartaTirada cartaTirada;
+		CartaTiradaEntity cartaTirada;
 		int cantidadCartas = 0;
 
-		for(Movimiento mov: turnosBaza) {
-			if(mov instanceof CartaTirada) {
-				cartaTirada = (CartaTirada) mov;
+		for(MovimientoEntity mov: turnosBaza) {
+			if(mov instanceof CartaTiradaEntity) {
+				cartaTirada = (CartaTiradaEntity) mov;
 
 				if(cantidadCartas == 0)
 					cartaJugador1 = cartaTirada.getCartaJugador();
@@ -184,8 +184,8 @@ public class Baza {
 			}
 		}
 		if (cantidadCartas == 4){
-			CartaJugador jugadorConCartaMayorPareja1 = cartaJugador1.getCarta().getPosicionValor() < cartaJugador3.getCarta().getPosicionValor() ? cartaJugador1 : cartaJugador3;
-			CartaJugador jugadorConCartaMayorPareja2 = cartaJugador2.getCarta().getPosicionValor() < cartaJugador4.getCarta().getPosicionValor() ? cartaJugador2 : cartaJugador4;
+			CartaJugadorEntity jugadorConCartaMayorPareja1 = cartaJugador1.getCarta().getPosicionValor() < cartaJugador3.getCarta().getPosicionValor() ? cartaJugador1 : cartaJugador3;
+			CartaJugadorEntity jugadorConCartaMayorPareja2 = cartaJugador2.getCarta().getPosicionValor() < cartaJugador4.getCarta().getPosicionValor() ? cartaJugador2 : cartaJugador4;
 
 			if(jugadorConCartaMayorPareja1.getCarta().getPosicionValor() < jugadorConCartaMayorPareja2.getCarta().getPosicionValor())
 				ganador= jugadorConCartaMayorPareja1.getJugador();
@@ -205,21 +205,21 @@ public class Baza {
 		return cantidadCartasTiradas;
 	}
 
-	public Jugador getGanador() {
+	public JugadorEntity getGanador() {
 		return ganador;
 	}
 
-	public void agregarMovimiento(Jugador jugador, Movimiento movimiento) {
+	public void agregarMovimiento(JugadorEntity jugador, MovimientoEntity movimiento) {
 		turnosBaza.add(movimiento);
 
-		if (movimiento instanceof CartaTirada) {
+		if (movimiento instanceof CartaTiradaEntity) {
 			cantidadCartasTiradas++;
-		} else if (movimiento instanceof Envite) {
+		} else if (movimiento instanceof EnviteEntity) {
 			
 		}
 	}
 
-	public Jugador cerrarBaza() throws BazaException {
+	public JugadorEntity cerrarBaza() throws BazaException {
 		definirGanador();
 		return ganador;
 	}
@@ -234,7 +234,7 @@ public class Baza {
 
 	public boolean tenesMovimiento(MovimientoDTO ultimoMovimiento) {
 		
-		for(Movimiento movimiento: turnosBaza)
+		for(MovimientoEntity movimiento: turnosBaza)
 		{
 			if(movimiento.getId() == ultimoMovimiento.getId())
 				return true;
@@ -242,11 +242,11 @@ public class Baza {
 		return false;
 	}
 
-	public List<Movimiento> getProximoMovimiento(MovimientoDTO ultimoMovimiento) {
+	public List<MovimientoEntity> getProximoMovimiento(MovimientoDTO ultimoMovimiento) {
 		
-		List<Movimiento> devolver = new ArrayList<Movimiento>();
+		List<MovimientoEntity> devolver = new ArrayList<MovimientoEntity>();
 		
-		for(Movimiento movimiento: turnosBaza){
+		for(MovimientoEntity movimiento: turnosBaza){
 			//voy agregando los movimientos anteriores hasta incluir el nuevo
 			if(movimiento.getId()>ultimoMovimiento.getId())
 			{

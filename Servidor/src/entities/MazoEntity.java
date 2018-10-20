@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,36 +10,36 @@ import dtos.MazoDTO;
 
 
 /* No se persiste el mazo */
-public class Mazo {
+public class MazoEntity {
 
-	private List<Carta> cartas;
+	private List<CartaEntity> cartas;
 
-	public Mazo() {
+	public MazoEntity() {
 		this.cartas = this.iniciarMazo();
 	}
 
-	public List<Carta> getCartas() {
+	public List<CartaEntity> getCartas() {
 		return cartas;
 	}
 
-	public void setCartas(List<Carta> cartas) {
+	public void setCartas(List<CartaEntity> cartas) {
 		this.cartas = cartas;
 	}
 
-	public Carta obtenerCarta() {
+	public CartaEntity obtenerCarta() {
 		Random rand = new Random();
 
 		int posicion = rand.nextInt(cartas.size());
 
-		Carta carta = cartas.get(posicion);
+		CartaEntity carta = cartas.get(posicion);
 
 		cartas.remove(posicion);
 
 		return carta;
 	}
 	
-	public List<Carta> iniciarMazo() {
-		List<Carta> mazo = new ArrayList<Carta>();
+	public List<CartaEntity> iniciarMazo() {
+		List<CartaEntity> mazo = new ArrayList<CartaEntity>();
 
 		mazo = CartaDAO.getInstancia().obtenerCartas();
 
