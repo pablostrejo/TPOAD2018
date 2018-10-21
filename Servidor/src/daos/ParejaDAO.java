@@ -7,8 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import dtos.ParejaDTO;
-
-import bean.Pareja;
+import entities.Pareja;
 
 
 public class ParejaDAO {

@@ -10,10 +10,10 @@ import org.hibernate.Transaction;
 
 import dtos.JugadorDTO;
 import dtos.PartidoDTO;
+import entities.Partido;
 import enums.EstadoPartido;
 import enums.TipoPartido;
 import exceptions.PartidoException;
-import bean.Partido;
 import hibernate.HibernateUtil;
 
 public class PartidoDAO {

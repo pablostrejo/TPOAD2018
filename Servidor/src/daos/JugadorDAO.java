@@ -8,9 +8,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import bean.Grupo;
-import bean.Jugador;
 import dtos.JugadorDTO;
+import entities.Grupo;
+import entities.Jugador;
 
 public class JugadorDAO {
 

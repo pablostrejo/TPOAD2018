@@ -6,9 +6,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import bean.Grupo;
-import bean.Partido;
 import dtos.GrupoDTO;
+import entities.Grupo;
+import entities.Partido;
 import hibernate.HibernateUtil;
 
 public class GrupoDAO {

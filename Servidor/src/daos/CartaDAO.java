@@ -10,8 +10,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import bean.Carta;
 import dtos.CartaDTO;
+import entities.Carta;
 
 
 public class CartaDAO {

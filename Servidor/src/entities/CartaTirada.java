@@ -1,4 +1,4 @@
-package bean;
+package entities;
 
 import javax.persistence.*;
 

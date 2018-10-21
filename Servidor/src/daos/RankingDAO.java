@@ -5,8 +5,8 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import bean.Partido;
-import bean.Ranking;
+import entities.Partido;
+import entities.Ranking;
 import hibernate.HibernateUtil;
 
 public class RankingDAO {
