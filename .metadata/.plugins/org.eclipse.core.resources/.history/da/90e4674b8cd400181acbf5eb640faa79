@@ -162,6 +162,8 @@ public class PartidoDAO {
 						"select p from Partido p inner join p.parejas par" +
 						" where p.estadoPartido =:estadoPartido and (par.jugador1.id =:idJugador or par.jugador2.id =:idJugador)").setParameter("estadoPartido", EstadoPartido.Terminado).setParameter("idJugador", jugador.getId()).list();
 				
+//				.setParameter("idJugador", jugador.getId())
+				
 		s.close();
 		return devolver;
 		

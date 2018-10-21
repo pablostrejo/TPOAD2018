@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;controlador.ServicioCentral&apos; to &apos;Controlador&apos;&#x0D;&#x0A;- Original project: &apos;Servidor&apos;&#x0D;&#x0A;- Original element: &apos;controlador.ServicioCentral&apos;&#x0D;&#x0A;- Renamed element: &apos;controlador.Controlador&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;ServicioCentral&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;controlador{ServicioCentral.java[ServicioCentral" matchStrategy="1" name="Controlador" qualified="false" references="true" similarDeclarations="false" stamp="1540058942749" textual="false" version="1.0"/>
+</session>

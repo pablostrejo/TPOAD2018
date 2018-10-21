@@ -7,7 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import controlador.Controlador;
+import controlador.ServicioCentral;
 import dtos.CartaJugadorDTO;
 import dtos.ChicoDTO;
 import dtos.GrupoDTO;
@@ -30,12 +30,12 @@ import exceptions.PartidoException;
 public class ObjetoRemoto extends UnicastRemoteObject implements TDATruco {
 
 	private static final long serialVersionUID = 1L;
-	private Controlador controlador;
+	private ServicioCentral controlador;
 
 	public ObjetoRemoto() throws RemoteException {
 		super();
 
-		controlador = Controlador.getInstance();
+		controlador = ServicioCentral.getInstance();
 	}
 
 	public JugadorDTO login(JugadorDTO jg) throws JugadorException {
